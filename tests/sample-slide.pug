@@ -1,0 +1,66 @@
+head
+    script(src="/js/slides-js.js")
+    slideSettings(aspectRatio="4:3" theme="default")
+    
+    mixin image(src)
+        img(src=src class=attributes.class)
+
+body
+    p-slide.title
+        h1#yay Welcome to p-slide
+        h3 A beautiful slide renderer written in Pug/CSS/JS
+
+        //+image("https://i.pinimg.com/736x/d5/24/29/d5242946cedd55c50c7e3b6058d0e9b9.jpg").animated.fadeIn
+        animation-list
+            li.withPrevious.fadeIn(target="#yay")
+            li.afterPrevious.bounceIn(target="h3")
+    p-slide
+        h1 What's so cool about this?
+        ul(style="font-size: 24")
+            li PugSlides created are clear, readable and elegant
+            li It's fast to use, yet not compromising on its power
+            li Here's a peek of what this slide looks like in code
+        pre(style="font-size: 18;")
+            code
+                | h1 What's so cool about this?
+                | ul(style="font-size: 24")
+                |    li PugSlides created are clear, readable and elegant
+                |    li It's fast to use, yet not compromising on its power
+                |    li Here's a peek of what this slide looks like in code
+                | // code to display this
+                | animation-list
+                |    li.onClick.fadeIn(target="li:nth-child(1)")
+                |    li.onClick.fadeIn(target="li:nth-child(2)")
+                |    li.onClick.fadeIn(target="li:nth-child(3)")
+                |    li.bounceIn(target="pre")  // Animations are onClick by default!
+
+        animation-list
+            li.onClick.fadeIn(target="li:nth-child(1)")
+            li.onClick.fadeIn(target="li:nth-child(2)")
+            li.onClick.fadeIn(target="li:nth-child(3)")
+            li.bounceIn(target="pre")
+
+    p-slide
+        h1 How to use PugSlides?
+        p With p-slide, you can code slides in #[a(href="https://pugjs.org/api/getting-started.html") pug]
+        p You can configure settings in #[strong head]
+        p Or even themes by creating your own stylesheets
+        p If you are a coder, you can add javascript to your slides too
+        animation-list
+            li.onClick.fadeIn(target="p")
+
+    p-slide
+        h1 Insert Title
+        p Insert body
+        p This is what a simple slide can look like
+
+    p-slide
+        h1 Tables
+        hr
+        table(style="font-size: 24")
+            tr #[th Alice] #[th Bob] #[th Carl]
+            tr
+                td 1
+                td 2
+                td 3
+        p You can include tables too!

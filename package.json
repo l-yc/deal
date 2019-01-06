@@ -1,0 +1,8 @@
+{
+  "main": "index.js",
+  "dependencies": {
+    "express": "4.16.4",
+    "pug": "2.0.3",
+    "jQuery": "1.7.4"
+  }
+}

@@ -1,0 +1,24 @@
+head
+    script(src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous")
+    script(src='/js/slides-js.js')
+    link(rel='stylesheet' type='text/css' href='/css/slides-css.css')
+    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css")
+    | !{slideHead}
+
+body
+    div.column
+        div.slide-viewer
+            h1=slideTitle
+            div.row
+                - if (slideNumber > 0)
+                    a.button-link(href=getLoc + '/' + (slideNumber-1)) Previous
+                a.button-link(href=getLoc + '/' + (slideNumber+1)) Next
+        hr
+        div.ratio-container(style='--ratio: calc(' + aspectRatio + ')') !{slideBody}
+
+//- https://github.com/IanLunn/Hover
+//- https://github.com/daneden/animate.css
+//- https://github.com/Martz90/vivify
+//- https://github.com/gmrchk/swupjs
+//- https://github.com/turbolinks/turbolinks
+//- http://x-tag.github.io/docs

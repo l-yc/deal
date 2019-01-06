@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css?family=Titillium+Web');
+
+/* Helper classes for layout */
+.column {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.row {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Style the slide viewer */
+.slide-viewer {
+    font-family: 'Titillium Web', sans-serif;
+}
+
+body {
+    margin: 0px;
+}
+
+a.button-link {
+    padding: 10px;
+    text-decoration: none;
+    background-color: white;
+    color: black;
+    border: solid 2px black;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+    margin: 5px;
+}
+
+a.button-link:hover {
+    background-color: black;
+    color: white;
+}
+
+@media (orientation:landscape) {    /* sanity check only works for sane aspect ratios */
+    .ratio-container {
+        position: relative;
+
+        height: 80vh;
+        width: calc(80vh * var(--ratio));
+        border: solid 2px black;
+    }
+}
+
+@media (orientation:portrait) {
+    .ratio-container {
+        position: relative;
+
+        height: calc(80vw / var(--ratio));
+        width: 80vw;
+        border: solid 2px black;
+    }
+}
+
+.ratio-container > p-slide {
+    position: absolute;
+    top: 0; bottom: 0; left: 0; right: 0;
+    word-wrap: break-word;
+}
+
+/* Default slide styles */
+.hidden {
+    visibility: hidden;
+}
