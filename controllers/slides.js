@@ -7,22 +7,40 @@ var wrap = require('pug-runtime/wrap');
 var generateCode = require('pug-code-gen');
 
 module.exports = function(express) {
-    // Craziness starts here
     var router = express.Router();
+
+    router.get('/:filename/', (req, res) => {
+        var filename = req.params.filename + '.pug';
+        var filePath = path.join(appRoot + "/tests", filename);
+
+        fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data) {
+            if (!err) {
+                let slideHead = getSlideHead(data, filename, {slideTitle: req.params.filename});
+
+                // displaying to the user
+                slideHead.getLoc ='/slides/' + req.params.filename;
+                res.render('slide-viewer', slideHead);
+            } else {
+                console.log(err);
+            }
+        });        
+    });
+
     router.get('/:filename/:slideNumber', (req, res) => {
         var filename = req.params.filename + '.pug';
         var filePath = path.join(appRoot + "/tests", filename);
         var slideNumber = parseInt(req.params.slideNumber);
 
-        if (slideNumber < 0) return;    // can't go back!
+        if (slideNumber < 0) {
+            res.json({ err: true });
+            return;    // can't go back!
+        }
         else {
             fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data) {
                 if (!err) {
-                    let slideObj = getSlideObj(data, filename, {slideTitle: req.params.filename, slideNumber: slideNumber});
+                    let slideBody = getSlideBody(data, filename, {slideTitle: req.params.filename, slideNumber: slideNumber});
 
-                    // displaying to the user
-                    slideObj.getLoc ='/slides/' + req.params.filename;
-                    res.render('slide-viewer', slideObj);
+                    res.json(slideBody);
                 } else {
                     console.log(err);
                 }
@@ -33,7 +51,7 @@ module.exports = function(express) {
     return router;
 };
 
-function getSlideObj(src, filename, slideMeta) {
+function getSlideHead(src, filename, slideMeta) {
     // parsing the file into a json object?
     var tokens = lex(src, {filename});
     var ast = parse(tokens, {filename, src});
@@ -50,6 +68,21 @@ function getSlideObj(src, filename, slideMeta) {
     var theme = '<link rel="stylesheet" type="text/css" href="/css/' + eval(settings.find((e) => e.name=='theme').val) + '.css">';
     headHtml += theme;
 
+    let slideHead = {
+        aspectRatio: aspectRatio,
+        slideHead: headHtml,
+        slideTitle: slideMeta.slideTitle
+    };
+    return slideHead;
+}
+
+function getSlideBody(src, filename, slideMeta) {
+    // parsing the file into a json object?
+    var tokens = lex(src, {filename});
+    var ast = parse(tokens, {filename, src});
+
+    // Parse the head    
+    var head = ast.nodes.find((e) => e.name == 'head');
     // Record down the mixins listed. We'll need to load this with each slide
     var mixins = head.block.nodes.find((e) => e.type == 'Mixin');
 
@@ -69,7 +102,6 @@ function getSlideObj(src, filename, slideMeta) {
 
         // Find animations, if any, and append to head
         var animationListBlock = selectedSlideAst.block.nodes.find(e => e.name == 'animation-list');
-        var scriptHtml = "";
         if (animationListBlock != undefined) {
             // Find and remove item from an array
             var i = selectedSlideAst.block.nodes.indexOf(animationListBlock);
@@ -97,12 +129,7 @@ function getSlideObj(src, filename, slideMeta) {
                 parsedAnimationList.push(animationItem);
             }
             console.log(parsedAnimationList);
-            scriptHtml = `
-                <script>
-                </script>
-            `;
         }
-        headHtml += scriptHtml;
 
         // Generate the slide html
         var funcStr = generateCode(selectedSlideAst, {
@@ -131,18 +158,14 @@ function getSlideObj(src, filename, slideMeta) {
         bodyHtml = div.innerHTML;   // replace with the updated html
     }
 
-    console.log(headHtml);
     console.log(bodyHtml);
 
-    // Return the slideObj -- Note to self: Need to reorganise the obj
-    let slideObj = {
-        aspectRatio: aspectRatio,
-        slideHead: headHtml,
-        slideTitle: slideMeta.slideTitle,
+    // Return the slideBody object
+    let slideBody = {
         slideBody: bodyHtml,
         slideNumber: slideMeta.slideNumber,
         numberOfSlides: numberOfSlides,
-        animationList: parsedAnimationList ? JSON.stringify(parsedAnimationList) : '[]'
+        animationList: parsedAnimationList
     };
-    return slideObj;
+    return slideBody;
 }
