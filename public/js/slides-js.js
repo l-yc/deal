@@ -32,31 +32,48 @@ function loadSlide(newSlideNumber) {
 
 /** Slide Playback Controls **/
 function unanimate(item) {
-    $(item.target).removeClass('animated').addClass('hidden').addClass(item.type);
+    const node = document.querySelector(item.target);
+
+    if (item.type == 'ENTRANCE') node.classList.add('hidden');
+    if (item.type == 'EXIT') node.classList.remove('hidden');
 }
 
 function animate(item) {
-    if (item.trigger == 'afterPrevious') {
-        setTimeout(function () {
-            $(item.target).removeClass('hidden').addClass('animated').addClass(item.type)
-        }, 1000);
-    }
-    else {
-        $(item.target).removeClass('hidden').addClass('animated').addClass(item.type);
-    }
+    const node = document.querySelector(item.target);
+
+    if (item.type == 'ENTRANCE') node.classList.remove('hidden');
+    if (item.trigger == 'fromPrevious') {
+        setTimeout(function() {
+            node.classList.add('animated', item.name);
+        }, item.delay * 1000);
+    } else node.classList.add('animated', item.name);
+
+    return new Promise((resolve, reject) => {
+        function handleAnimationEnd() {
+            if (item.type == 'EXIT') node.classList.add('hidden');
+
+            node.classList.remove('animated', item.name)
+            node.removeEventListener('animationend', handleAnimationEnd)
+            resolve();
+        }
+        node.addEventListener('animationend', handleAnimationEnd);
+    });
 }
 
-function initAnimations() {
+async function initAnimations() {
     stack = [];
+    let prvAnimationComplete = null;
     while (animationList.length > 0 && animationList[0].trigger != 'onClick') {
         let item = animationList.shift();
-        animate(item);
+        if (item.trigger == 'afterPrevious' && prvAnimationComplete)
+            await prvAnimationComplete;
+        prvAnimationComplete = animate(item);
         stack.push(item);   // add to history stack
     }
     document.querySelector('#animation-progress-indicator').innerHTML = `${stack.length} / ${totalAnimations}`;
 }
 
-function prevClick(event) {
+async function prevClick(event) {
     if (stack.length == 0) {
         // move on to previous slide
         loadSlide(slideNumber-1);
@@ -69,14 +86,16 @@ function prevClick(event) {
     document.querySelector('#animation-progress-indicator').innerHTML = `${stack.length} / ${totalAnimations}`;
 }
 
-function nextClick(event) {
+async function nextClick(event) {
     if (animationList.length == 0) {
         // move on to next slide
         loadSlide(slideNumber+1);
     }
     else do {
         let item = animationList.shift();
-        animate(item);
+        if (item.trigger == 'afterPrevious' && prvAnimationComplete)
+            await prvAnimationComplete;
+        prvAnimationComplete = animate(item);
         stack.push(item);   // add to history stack
     } while (animationList.length > 0 && animationList[0].trigger != 'onClick');
     document.querySelector('#animation-progress-indicator').innerHTML = `${stack.length} / ${totalAnimations}`;
@@ -152,7 +171,7 @@ function scaleSlideText() {
 
     // we'll only need to fit height, since width is wrapped
     let lo = 0, hi = parseInt(height);
-    console.log('seed: ' + lo + ' - ' + hi);
+    //console.log('seed: ' + lo + ' - ' + hi);
     while (hi - lo > 1) {
         let mid = (lo + hi)/2;
 
@@ -161,13 +180,13 @@ function scaleSlideText() {
         if (contentHeight <= height) lo = mid;
         else hi = mid;
 
-        console.log(`lo ${lo} hi ${hi} :: mid ${mid} cur: ${contentHeight} vs tgt: ${height}`);
+        //console.log(`lo ${lo} hi ${hi} :: mid ${mid} cur: ${contentHeight} vs tgt: ${height}`);
     }
     let scaledEm = lo;
 
     // sanity check, make sure the unit isn't greater than 1/25 of the slide
     let maxEm = (height/25.0) / 1.17;
-    console.log('max ' + maxEm);
+    //console.log('max ' + maxEm);
     scaledEm = Math.min(scaledEm, maxEm);
 
     slide.style.fontSize = scaledEm + 'px'; // since all text are based on em

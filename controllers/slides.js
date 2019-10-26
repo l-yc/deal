@@ -98,7 +98,7 @@ function getSlideBody(src, filename, slideMeta) {
     else {
         var selectedSlideAst = body[slideMeta.slideNumber]; // select the slide
         selectedSlideAst.block.nodes.unshift(mixins);       // enable mixins
-        //console.log(JSON.stringify(selectedSlideAst, null, '  '))
+        console.log(JSON.stringify(selectedSlideAst, null, '  '))
 
         // Find animations, if any, and append to head
         var animationListBlock = selectedSlideAst.block.nodes.find(e => e.name == 'animation-list');
@@ -119,10 +119,13 @@ function getSlideBody(src, filename, slideMeta) {
                     item[j].val = eval(item[j].val);
                     if (item[j].name == "target") animationItem.target = '.slide ' + item[j].val;
                     else {
-                        if (["onClick", "withPrevious", "afterPrevious"].includes(item[j].val))
+                        if (["onClick", "withPrevious", "afterPrevious", "fromPrevious"].includes(item[j].val))
                             animationItem.trigger = item[j].val;
-                        else
-                            animationItem.type = item[j].val;
+                        else if (item[j].name == "class") {
+                            animationItem.name = item[j].val;
+                            animationItem.type = animationItem.name.includes('In') ? 'ENTRANCE' : (animationItem.name.includes('Out') ? 'EXIT' : 'EFFECT');
+                        }
+                        else if (item[j].name == "delay") animationItem.delay = item[j].val; // must be a fromPrevious attribute
                     }
                 }
 
@@ -154,7 +157,7 @@ function getSlideBody(src, filename, slideMeta) {
         for (let i = 0; i < parsedAnimationList.length; ++i) {
             let item = parsedAnimationList[i];
             let target = div.querySelector(item.target);
-            if (target) target.classList.add('hidden');
+            if (item.type == 'ENTRANCE' && target) target.classList.add('hidden');
         }
         bodyHtml = div.innerHTML;   // replace with the updated html
     }
