@@ -142,7 +142,7 @@ function getSlideObj(src, filename, slideMeta) {
         slideBody: bodyHtml,
         slideNumber: slideMeta.slideNumber,
         numberOfSlides: numberOfSlides,
-        animationList: JSON.stringify(parsedAnimationList)
+        animationList: parsedAnimationList ? JSON.stringify(parsedAnimationList) : '[]'
     };
     return slideObj;
 }
