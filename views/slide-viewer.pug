@@ -4,10 +4,8 @@ head
     link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css")
     link(href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css", rel="stylesheet", integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN", crossorigin="anonymous")
     script.
-        var getLoc = "#{getLoc}";
-        var slideNumber = #{slideNumber};
-        var animationList = !{animationList};
-        var aspectRatio = #{aspectRatio};
+        let getLoc = "#{getLoc}";
+        let aspectRatio = #{aspectRatio};
     script(src='/js/slides-js.js')
     | !{slideHead}
 
@@ -18,7 +16,8 @@ body.column
                 h1 Sidebar
                 a.button-link(href="#") Fullscreen
                 div.slide-list
-                    p #{slideNumber} / #{numberOfSlides}
+                    p#slide-progress-indicator
+                        // #{slideNumber} / #{numberOfSlides}
         div.row(style="flex:1").center: div.column.center
             div.slide-controls
                 h1=slideTitle
@@ -28,7 +27,8 @@ body.column
                     a#slide-control-fullscreen.slide-control-button: i.fa.fa-expand(aria-hidden="true")
 
             //hr
-            div.ratio-container.slide(style='--ratio: calc(' + aspectRatio + ')') !{slideBody}
+            div.ratio-container.slide
+            //div.ratio-container.slide(style='--ratio: calc(' + aspectRatio + ')') !{slideBody}
 
 //- https://github.com/IanLunn/Hover
 //- https://github.com/daneden/animate.css

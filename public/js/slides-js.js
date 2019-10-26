@@ -1,13 +1,40 @@
+let slideNumber, animationList, numberOfSlides, stack;
+
 window.onload = function() {
     document.getElementById('slide-control-prev').onclick = prevClick;
     document.getElementById('slide-control-next').onclick = nextClick;
     document.getElementById('slide-control-fullscreen').onclick = presentFullscreen;
 }
 
+/** Load data **/
+function loadSlide(newSlideNumber) {
+    let target = `${getLoc}/${newSlideNumber}`;
+    console.log(target);
+    $.get(target, function(data, status){
+        if (data.err) {
+            return;
+        } else {
+            console.log("Data: " + JSON.stringify(data) + "\nStatus: " + status);
+            //aspectRatio = eval(data.aspectRatio);
+            //slideHead = unescape(data.slideHead);
+            //slideTitle = data.slideTitle;
+            slideBody = unescape(data.slideBody);
+            slideNumber = parseInt(data.slideNumber);
+            numberOfSlides = data.numberOfSlides;
+            animationList = data.animationList;
+
+            document.querySelector('.slide').innerHTML = slideBody;
+            document.querySelector('#slide-progress-indicator').innerHTML = `${slideNumber} / ${numberOfSlides}`;
+
+            resizeSlide();
+            initAnimations();
+        }
+    });
+}
+
 /** Slide Playback Controls **/
-let stack = [];
-console.log(slideNumber);
-console.log(animationList);
+//console.log(slideNumber);
+//console.log(animationList);
 
 function unanimate(item) {
     $(item.target).removeClass('animated').addClass('hidden').addClass(item.type);
@@ -24,10 +51,19 @@ function animate(item) {
     }
 }
 
-function prevClick() {
+function initAnimations() {
+    stack = [];
+    while (animationList.length > 0 && animationList[0].trigger != 'onClick') {
+        let item = animationList.shift();
+        animate(item);
+    }
+}
+
+function prevClick(event) {
     if (stack.length == 0) {
         // move on to previous slide
-        window.location.href=`${getLoc}/${slideNumber-1}`;
+        loadSlide(slideNumber-1);
+        //window.location.href=`${getLoc}/${slideNumber-1}`;
     }
     else {  // we only undo 1 animation at a time
         let item = stack.pop();
@@ -39,7 +75,8 @@ function prevClick() {
 function nextClick(event) {
     if (animationList.length == 0) {
         // move on to next slide
-        window.location.href=`${getLoc}/${slideNumber+1}`;
+        loadSlide(slideNumber+1);
+        //window.location.href=`${getLoc}/${slideNumber+1}`;
     }
     else do {
         let item = animationList.shift();
@@ -49,10 +86,7 @@ function nextClick(event) {
 }
 
 $(document).ready(function() {
-    while (animationList.length > 0 && animationList[0].trigger != 'onClick') {
-        let item = animationList.shift();
-        animate(item);
-    }
+    loadSlide(0);
 });
 
 $(document).on('click', '.slide', nextClick);
@@ -78,11 +112,22 @@ function presentFullscreen() {
     requestFullScreen(elem);
 }
 
+function resizeSlide() {
+    let slide = document.querySelector('.slide');
+
+    let maxWidth  = 0.8 * (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth),
+        maxHeight = 0.8 * (window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight);
+    if (maxWidth > maxHeight) slide.style.height = maxHeight, slide.style.width  = maxHeight * aspectRatio;
+    else                      slide.style.width  = maxWidth , slide.style.height = maxWidth  / aspectRatio;
+
+    console.log(slide);
+    console.log(aspectRatio);
+    console.log(maxWidth + " x " + maxHeight);
+}
+
 document.onfullscreenchange = function ( event ) {
     let sidebar = document.querySelector('.sidebar');
     let slideControls = document.querySelector('.slide-controls');
-
-    let slide = document.querySelector('.slide');
 
     if (document.fullscreen) {
         // hide all the unnecessary stuff
@@ -98,12 +143,7 @@ document.onfullscreenchange = function ( event ) {
     } else {
         sidebar.style.display = 'initial';
         slideControls.style.display = 'initial';
-
-        let maxWidth  = 0.8 * (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth),
-            maxHeight = 0.8 * (window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight);
-        if (maxWidth > maxHeight) slide.style.height = maxHeight, slide.style.width  = maxHeight * aspectRatio;
-        else                      slide.style.width  = maxWidth , slide.style.height = maxWidth  / aspectRatio;
-
+        resizeSlide();
         console.log(maxWidth, maxHeight);
     }
 };

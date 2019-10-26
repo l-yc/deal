@@ -1,0 +1,92 @@
+head
+    script(src="/js/slides-js.js")
+    slideSettings(aspectRatio="4:3" theme="default")
+    
+    mixin image(src)
+        img(src=src class=attributes.class)
+
+body
+    p-slide.title
+        h1#slide-title Blazer Loaning App
+        h3 CS4131 Module Project
+
+        animation-list
+            li.withPrevious.fadeIn(target="#slide-title")
+            li.afterPrevious.bounceIn(target="h3")
+
+    p-slide
+        h1 Features
+        ul(style="font-size: 24")
+            li Linked to online excel sheets
+            li Auto-update requests regularly
+            li View loan requests in calendar/list form
+            li Browse and add responses
+            li Check the status of inventory
+            li Notifications for new responses
+
+        animation-list
+            li.onClick.fadeIn(target="li:nth-child(1)")
+            li.onClick.fadeIn(target="li:nth-child(2)")
+            li.onClick.fadeIn(target="li:nth-child(3)")
+            li.onClick.fadeIn(target="li:nth-child(4)")
+            li.onClick.fadeIn(target="li:nth-child(5)")
+            li.onClick.fadeIn(target="li:nth-child(6)")
+
+    p-slide
+        h1 Pages
+        ul(style="font-size: 24")
+            li Dashboard
+            li Calendar for when there's collection/return
+            li Loan requests
+            li Loan records (name + blazers loaned)
+            li Present stock (updates when blazer is loaned out)
+            
+        animation-list
+            li.onClick.fadeIn(target="li:nth-child(1)")
+            li.onClick.fadeIn(target="li:nth-child(2)")
+            li.onClick.fadeIn(target="li:nth-child(3)")
+            li.onClick.fadeIn(target="li:nth-child(4)")
+            li.onClick.fadeIn(target="li:nth-child(5)")
+            li.onClick.fadeIn(target="li:nth-child(6)")
+
+    p-slide.title
+        h1#yay Demo
+
+        animation-list
+            li.withPrevious.bounceIn(target="#yay")
+
+    p-slide
+        h1 Challenges
+        ul(style="font-size: 24")
+            li Poor Microsoft Documentation
+            li Many random bugs
+            li Designing the navigation
+            
+        animation-list
+            li.onClick.fadeIn(target="li:nth-child(1)")
+            li.onClick.fadeIn(target="li:nth-child(2)")
+            li.onClick.fadeIn(target="li:nth-child(3)")
+            li.onClick.fadeIn(target="li:nth-child(4)")
+            li.onClick.fadeIn(target="li:nth-child(5)")
+            li.onClick.fadeIn(target="li:nth-child(6)")
+            li.onClick.fadeIn(target="li:nth-child(7)")    
+
+    p-slide
+        h1 Future work
+        ul(style="font-size: 24")
+            li Integrate with student leadership calendar
+            li Meetings integration
+            li Planner integration
+            li Microsoft Delta Queries
+            li Improved notifications
+            li Local data caching in database
+            li Encryption of data
+            
+        animation-list
+            li.onClick.fadeIn(target="li:nth-child(1)")
+            li.onClick.fadeIn(target="li:nth-child(2)")
+            li.onClick.fadeIn(target="li:nth-child(3)")
+            li.onClick.fadeIn(target="li:nth-child(4)")
+            li.onClick.fadeIn(target="li:nth-child(5)")
+            li.onClick.fadeIn(target="li:nth-child(6)")
+            li.onClick.fadeIn(target="li:nth-child(7)")
