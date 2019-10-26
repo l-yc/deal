@@ -1,7 +1,8 @@
 /* Customise global style here */
-.slide {
+.slide p-slide {
     font-family: 'Titillium Web', sans-serif;
     padding: 20px;
+    background-color: red;
 }
 
 .slide h1 {

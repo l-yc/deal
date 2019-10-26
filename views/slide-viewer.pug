@@ -7,11 +7,12 @@ head
         var getLoc = "#{getLoc}";
         var slideNumber = #{slideNumber};
         var animationList = !{animationList};
+        var aspectRatio = #{aspectRatio};
     script(src='/js/slides-js.js')
     | !{slideHead}
 
-body
-    div.row
+body.column
+    div.row(style="flex:1")
         div.column(style="background-color: red")
             div.sidebar
                 h1 Sidebar
@@ -22,10 +23,9 @@ body
             div.slide-controls
                 h1=slideTitle
                 div.row.center
-                    //a(href=getLoc + '/' + (slideNumber-1)).slide-control-button: i.fa.fa-chevron-left(aria-hidden="true")
                     a#slide-control-prev.slide-control-button: i.fa.fa-chevron-left(aria-hidden="true")
-                    //a(href=getLoc + '/' + (slideNumber+1)).slide-control-button: i.fa.fa-chevron-right(aria-hidden="true")
                     a#slide-control-next.slide-control-button: i.fa.fa-chevron-right(aria-hidden="true")
+                    a#slide-control-fullscreen.slide-control-button: i.fa.fa-expand(aria-hidden="true")
 
             //hr
             div.ratio-container.slide(style='--ratio: calc(' + aspectRatio + ')') !{slideBody}

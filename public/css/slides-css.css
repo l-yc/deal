@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css?family=Titillium+Web');
 
+html, body {
+    margin: 0px;
+    height: 100%;
+}
+
 /* Helper classes for layout */
 .column {
     display: -webkit-box;
@@ -24,13 +29,13 @@
     justify-content: center;
 }
 
-/* Style the slide viewer */
-/*:not(.slide) > * {
-}*/
-
-body {
-    margin: 0px;
+:not(.slide) > * {
+    font-family: 'Titillium Web', sans-serif;
 }
+
+/* Style the sidebar */
+
+/* Style the slide viewer */
 
 a.button-link {
     padding: 10px;
@@ -73,7 +78,6 @@ h1 {
 
 @media (orientation:landscape) {    /* sanity check only works for sane aspect ratios */
     .slide-controls {
-        font-family: 'Titillium Web', sans-serif;
         height: 15vh;
     }
 
@@ -92,7 +96,6 @@ h1 {
 
 @media (orientation:portrait) {
     .slide-controls {
-        font-family: 'Titillium Web', sans-serif;
         height: 15vw;
     }
 
@@ -115,7 +118,7 @@ h1 {
     word-wrap: break-word;
 }
 
-/* Default slide styles */
+/* to support animations */
 .hidden {
     visibility: hidden;
 }
