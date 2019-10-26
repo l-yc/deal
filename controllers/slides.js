@@ -39,7 +39,7 @@ function getSlideObj(src, filename, slideMeta) {
     var head = ast.nodes.find((e) => e.name == 'head');
     //console.log(JSON.stringify(head, null, '  '));
 
-        // We'll obtain the settings and then add in the variables respectively
+    // We'll obtain the settings and then add in the variables respectively
     var settings = head.block.nodes.find((e) => e.name == 'slideSettings').attrs;
     var headHtml = "";
     var aspectRatio = eval(settings.find((e) => e.name=='aspectRatio').val).replace(':', '/');
@@ -47,7 +47,7 @@ function getSlideObj(src, filename, slideMeta) {
     var theme = '<link rel="stylesheet" type="text/css" href="/css/' + eval(settings.find((e) => e.name=='theme').val) + '.css">';
     headHtml += theme;
 
-        // Record down the mixins listed. We'll need to load this with each slide
+    // Record down the mixins listed. We'll need to load this with each slide
     var mixins = head.block.nodes.find((e) => e.type == 'Mixin');
 
     // Parse the body
@@ -93,37 +93,38 @@ function getSlideObj(src, filename, slideMeta) {
             }
             console.log(parsedAnimationList);
             scriptHtml = `
-            <script>
-                let animationList = ${JSON.stringify(parsedAnimationList)};
-                $(document).ready(function() {
-                    for (let i = 0; i < animationList.length; ++i) {
-                        let item = animationList[i];
-                        $(item.target).addClass('hidden');
-                    }
-                    while (animationList.length > 0 && animationList[0].trigger != 'onClick') {
-                        let item = animationList.shift();
-                        if (item.trigger == 'afterPrevious') {
-                            $(item.target).delay(1000).removeClass('hidden').addClass('animated').addClass(item.type);
+                <script>
+                    let animationList = ${JSON.stringify(parsedAnimationList)};
+                    $(document).ready(function() {
+                        for (let i = 0; i < animationList.length; ++i) {
+                            let item = animationList[i];
+                            $(item.target).addClass('hidden');
                         }
-                        else {
-                            $(item.target).removeClass('hidden').addClass('animated').addClass(item.type);
+                        while (animationList.length > 0 && animationList[0].trigger != 'onClick') {
+                            let item = animationList.shift();
+                            if (item.trigger == 'afterPrevious') {
+                                $(item.target).delay(1000).removeClass('hidden').addClass('animated').addClass(item.type);
+                            }
+                            else {
+                                $(item.target).removeClass('hidden').addClass('animated').addClass(item.type);
+                            }
                         }
-                    }
-                });
+                    });
 
-                $(document).click(function () {
-                    if (animationList.length == 0) return;
-                    do {
-                        let item = animationList.shift();
-                        if (item.trigger == 'afterPrevious') {
-                            $(item.target).delay(1000).removeClass('hidden').addClass('animated').addClass(item.type);
-                        }
-                        else {
-                            $(item.target).removeClass('hidden').addClass('animated').addClass(item.type);
-                        }
-                    } while (animationList.length > 0 && animationList[0].trigger != 'onClick');
-                });
-            </script>`
+                    $(document).click(function () {
+                        if (animationList.length == 0) return;
+                        do {
+                            let item = animationList.shift();
+                            if (item.trigger == 'afterPrevious') {
+                                $(item.target).delay(1000).removeClass('hidden').addClass('animated').addClass(item.type);
+                            }
+                            else {
+                                $(item.target).removeClass('hidden').addClass('animated').addClass(item.type);
+                            }
+                        } while (animationList.length > 0 && animationList[0].trigger != 'onClick');
+                    });
+                </script>
+            `;
         }
         headHtml += scriptHtml;
 
@@ -141,6 +142,12 @@ function getSlideObj(src, filename, slideMeta) {
     console.log(bodyHtml);
 
     // Return the slideObj -- Note to self: Need to reorganise the obj
-    let slideObj = {aspectRatio: aspectRatio, slideHead: headHtml, slideTitle: slideMeta.slideTitle, slideBody: bodyHtml, slideNumber: slideMeta.slideNumber};
+    let slideObj = {
+        aspectRatio: aspectRatio,
+        slideHead: headHtml,
+        slideTitle: slideMeta.slideTitle,
+        slideBody: bodyHtml,
+        slideNumber: slideMeta.slideNumber
+    };
     return slideObj;
 }

@@ -3,17 +3,21 @@ head
     script(src='/js/slides-js.js')
     link(rel='stylesheet' type='text/css' href='/css/slides-css.css')
     link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css")
+    link(href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css", rel="stylesheet", integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN", crossorigin="anonymous")
     | !{slideHead}
 
 body
     div.column
-        div.slide-viewer
+        div.slide-controls
             h1=slideTitle
             div.row
                 - if (slideNumber > 0)
-                    a.button-link(href=getLoc + '/' + (slideNumber-1)) Previous
-                a.button-link(href=getLoc + '/' + (slideNumber+1)) Next
-        hr
+                    a(href=getLoc + '/' + (slideNumber-1)).slide-control-button: i.fa.fa-chevron-left(aria-hidden="true")
+                    //a.button-link(href=getLoc + '/' + (slideNumber-1)) Previous
+                a(href=getLoc + '/' + (slideNumber+1)).slide-control-button: i.fa.fa-chevron-right(aria-hidden="true")
+                //a.button-link(href=getLoc + '/' + (slideNumber+1)) Next
+
+        //hr
         div.ratio-container(style='--ratio: calc(' + aspectRatio + ')') !{slideBody}
 
 //- https://github.com/IanLunn/Hover
