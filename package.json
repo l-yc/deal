@@ -1,8 +1,11 @@
 {
   "main": "index.js",
   "dependencies": {
+    "canvas": "^2.6.0",
     "express": "4.16.4",
-    "pug": "2.0.3",
-    "jQuery": "1.7.4"
+    "jQuery": "1.7.4",
+    "jsdom": "^15.2.0",
+    "nodemon": "^1.19.4",
+    "pug": "2.0.3"
   }
 }

@@ -8,8 +8,6 @@
     display: -webkit-flex;
     display: flex;
     flex-flow: column nowrap;
-    align-items: center;
-    justify-content: center;
 }
 
 .row {
@@ -19,11 +17,17 @@
     display: -webkit-flex;
     display: flex;
     flex-flow: row nowrap;
+}
+
+.center {
     align-items: center;
     justify-content: center;
 }
 
 /* Style the slide viewer */
+/*:not(.slide) > * {
+}*/
+
 body {
     margin: 0px;
 }
@@ -51,10 +55,20 @@ a.slide-control-button {
 	font-size: 100%;
 	font: inherit;
 	vertical-align: baseline;
+    color: black;
+    transition: all 0.2s ease-in-out;
+}
+
+a.slide-control-button:hover {
+    color: grey;
 }
 
 a.slide-control-button > i {
     padding: 10px;
+}
+
+h1 {
+    margin: 0px;
 }
 
 @media (orientation:landscape) {    /* sanity check only works for sane aspect ratios */

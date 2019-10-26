@@ -14,17 +14,20 @@ module.exports = function(express) {
         var filePath = path.join(appRoot + "/tests", filename);
         var slideNumber = parseInt(req.params.slideNumber);
 
-        fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data) {
-            if (!err) {
-                let slideObj = getSlideObj(data, filename, {slideTitle: req.params.filename, slideNumber: slideNumber});
+        if (slideNumber < 0) return;    // can't go back!
+        else {
+            fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data) {
+                if (!err) {
+                    let slideObj = getSlideObj(data, filename, {slideTitle: req.params.filename, slideNumber: slideNumber});
 
-                // displaying to the user
-                slideObj.getLoc ='/slides/' + req.params.filename;
-                res.render('slide-viewer', slideObj);
-            } else {
-                console.log(err);
-            }
-        });        
+                    // displaying to the user
+                    slideObj.getLoc ='/slides/' + req.params.filename;
+                    res.render('slide-viewer', slideObj);
+                } else {
+                    console.log(err);
+                }
+            });        
+        }
     });
 
     return router;
@@ -53,11 +56,13 @@ function getSlideObj(src, filename, slideMeta) {
     // Parse the body
     var body = ast.nodes.find((e) => e.name == 'body').block.nodes;
     var bodyHtml;
+    var parsedAnimationList;
     if (slideMeta.slideNumber < 0 || slideMeta.slideNumber >= body.length) {
         // Invalid slide number, we'll just assume it's the end of presentation
         bodyHtml = '<div class="slide"><h1> End of Presentation </h1></div>';
     }
     else {
+        var numberOfSlides = body.length;
         var selectedSlideAst = body[slideMeta.slideNumber]; // select the slide
         selectedSlideAst.block.nodes.unshift(mixins);       // enable mixins
         //console.log(JSON.stringify(selectedSlideAst, null, '  '))
@@ -80,7 +85,7 @@ function getSlideObj(src, filename, slideMeta) {
                 var animationItem = { trigger: "onClick", type: undefined, target: undefined }
                 for (let j = 0; j < item.length; ++j) {
                     item[j].val = eval(item[j].val);
-                    if (item[j].name == "target") animationItem.target = item[j].val;
+                    if (item[j].name == "target") animationItem.target = '.slide ' + item[j].val;
                     else {
                         if (["onClick", "withPrevious", "afterPrevious"].includes(item[j].val))
                             animationItem.trigger = item[j].val;
@@ -94,35 +99,6 @@ function getSlideObj(src, filename, slideMeta) {
             console.log(parsedAnimationList);
             scriptHtml = `
                 <script>
-                    let animationList = ${JSON.stringify(parsedAnimationList)};
-                    $(document).ready(function() {
-                        for (let i = 0; i < animationList.length; ++i) {
-                            let item = animationList[i];
-                            $(item.target).addClass('hidden');
-                        }
-                        while (animationList.length > 0 && animationList[0].trigger != 'onClick') {
-                            let item = animationList.shift();
-                            if (item.trigger == 'afterPrevious') {
-                                $(item.target).delay(1000).removeClass('hidden').addClass('animated').addClass(item.type);
-                            }
-                            else {
-                                $(item.target).removeClass('hidden').addClass('animated').addClass(item.type);
-                            }
-                        }
-                    });
-
-                    $(document).click(function () {
-                        if (animationList.length == 0) return;
-                        do {
-                            let item = animationList.shift();
-                            if (item.trigger == 'afterPrevious') {
-                                $(item.target).delay(1000).removeClass('hidden').addClass('animated').addClass(item.type);
-                            }
-                            else {
-                                $(item.target).removeClass('hidden').addClass('animated').addClass(item.type);
-                            }
-                        } while (animationList.length > 0 && animationList[0].trigger != 'onClick');
-                    });
                 </script>
             `;
         }
@@ -138,6 +114,23 @@ function getSlideObj(src, filename, slideMeta) {
         var func = wrap(funcStr, 'helloWorld');
         bodyHtml = func();
     }
+
+    // hide all the animated elements
+    if (parsedAnimationList && parsedAnimationList.length > 0) {
+        const jsdom = require("jsdom");
+        const { JSDOM } = jsdom;
+        let dom = new JSDOM(bodyHtml);
+        let doc = dom.window.document;
+        let div = doc.createElement('div');
+        div.classList.add('slide');
+        div.innerHTML = bodyHtml;
+        for (let i = 0; i < parsedAnimationList.length; ++i) {
+            let item = parsedAnimationList[i];
+            div.querySelector(item.target).classList.add('hidden');
+        }
+        bodyHtml = div.innerHTML;   // replace with the updated html
+    }
+
     console.log(headHtml);
     console.log(bodyHtml);
 
@@ -147,7 +140,9 @@ function getSlideObj(src, filename, slideMeta) {
         slideHead: headHtml,
         slideTitle: slideMeta.slideTitle,
         slideBody: bodyHtml,
-        slideNumber: slideMeta.slideNumber
+        slideNumber: slideMeta.slideNumber,
+        numberOfSlides: numberOfSlides,
+        animationList: JSON.stringify(parsedAnimationList)
     };
     return slideObj;
 }

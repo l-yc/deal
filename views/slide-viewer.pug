@@ -1,24 +1,34 @@
 head
     script(src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous")
-    script(src='/js/slides-js.js')
     link(rel='stylesheet' type='text/css' href='/css/slides-css.css')
     link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css")
     link(href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css", rel="stylesheet", integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN", crossorigin="anonymous")
+    script.
+        var getLoc = "#{getLoc}";
+        var slideNumber = #{slideNumber};
+        var animationList = !{animationList};
+    script(src='/js/slides-js.js')
     | !{slideHead}
 
 body
-    div.column
-        div.slide-controls
-            h1=slideTitle
-            div.row
-                - if (slideNumber > 0)
-                    a(href=getLoc + '/' + (slideNumber-1)).slide-control-button: i.fa.fa-chevron-left(aria-hidden="true")
-                    //a.button-link(href=getLoc + '/' + (slideNumber-1)) Previous
-                a(href=getLoc + '/' + (slideNumber+1)).slide-control-button: i.fa.fa-chevron-right(aria-hidden="true")
-                //a.button-link(href=getLoc + '/' + (slideNumber+1)) Next
+    div.row
+        div.column(style="background-color: red")
+            div.sidebar
+                h1 Sidebar
+                a.button-link(href="#") Fullscreen
+                div.slide-list
+                    p #{slideNumber} / #{numberOfSlides}
+        div.row(style="flex:1").center: div.column.center
+            div.slide-controls
+                h1=slideTitle
+                div.row.center
+                    //a(href=getLoc + '/' + (slideNumber-1)).slide-control-button: i.fa.fa-chevron-left(aria-hidden="true")
+                    a#slide-control-prev.slide-control-button: i.fa.fa-chevron-left(aria-hidden="true")
+                    //a(href=getLoc + '/' + (slideNumber+1)).slide-control-button: i.fa.fa-chevron-right(aria-hidden="true")
+                    a#slide-control-next.slide-control-button: i.fa.fa-chevron-right(aria-hidden="true")
 
-        //hr
-        div.ratio-container(style='--ratio: calc(' + aspectRatio + ')') !{slideBody}
+            //hr
+            div.ratio-container.slide(style='--ratio: calc(' + aspectRatio + ')') !{slideBody}
 
 //- https://github.com/IanLunn/Hover
 //- https://github.com/daneden/animate.css
