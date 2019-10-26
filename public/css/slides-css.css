@@ -66,6 +66,7 @@ a.slide-control-button {
 
 a.slide-control-button:hover {
     color: grey;
+    cursor: pointer;
 }
 
 a.slide-control-button > i {

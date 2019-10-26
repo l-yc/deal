@@ -17,15 +17,14 @@ body.column
                 a.button-link(href="#") Fullscreen
                 div.slide-list
                     p#slide-progress-indicator
-                        // #{slideNumber} / #{numberOfSlides}
+                    p#animation-progress-indicator
         div.row(style="flex:1").center: div.column.center
             div.slide-controls
                 h1=slideTitle
                 div.row.center
                     a#slide-control-prev.slide-control-button: i.fa.fa-chevron-left(aria-hidden="true")
                     a#slide-control-next.slide-control-button: i.fa.fa-chevron-right(aria-hidden="true")
-                    a#slide-control-fullscreen.slide-control-button: i.fa.fa-expand(aria-hidden="true")
-
+                    a#slide-control-fullscreen.slide-control-button: i.fa.fa-arrows-alt(aria-hidden="true")
             //hr
             div.ratio-container.slide
             //div.ratio-container.slide(style='--ratio: calc(' + aspectRatio + ')') !{slideBody}

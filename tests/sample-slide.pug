@@ -16,11 +16,11 @@ body
             li.afterPrevious.bounceIn(target="h3")
     p-slide
         h1 What's so cool about this?
-        ul(style="font-size: 24")
+        ul
             li PugSlides created are clear, readable and elegant
             li It's fast to use, yet not compromising on its power
             li Here's a peek of what this slide looks like in code
-        pre(style="font-size: 18;")
+        pre
             code
                 | h1 What's so cool about this?
                 | ul(style="font-size: 24")
@@ -38,6 +38,25 @@ body
             li.onClick.fadeIn(target="li:nth-child(1)")
             li.onClick.fadeIn(target="li:nth-child(2)")
             li.onClick.fadeIn(target="li:nth-child(3)")
+            li.bounceIn(target="pre")
+
+    p-slide
+        h1 That was too small. Let's try again
+        pre
+            code
+                | h1 What's so cool about this?
+                | ul(style="font-size: 24")
+                |    li PugSlides created are clear, readable and elegant
+                |    li It's fast to use, yet not compromising on its power
+                |    li Here's a peek of what this slide looks like in code
+                | // code to display this
+                | animation-list
+                |    li.onClick.fadeIn(target="li:nth-child(1)")
+                |    li.onClick.fadeIn(target="li:nth-child(2)")
+                |    li.onClick.fadeIn(target="li:nth-child(3)")
+                |    li.bounceIn(target="pre")  // Animations are onClick by default!
+
+        animation-list
             li.bounceIn(target="pre")
 
     p-slide

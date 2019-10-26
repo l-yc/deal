@@ -90,12 +90,12 @@ function getSlideBody(src, filename, slideMeta) {
     var body = ast.nodes.find((e) => e.name == 'body').block.nodes;
     var bodyHtml;
     var parsedAnimationList;
+    var numberOfSlides = body.length;
     if (slideMeta.slideNumber < 0 || slideMeta.slideNumber >= body.length) {
         // Invalid slide number, we'll just assume it's the end of presentation
-        bodyHtml = '<div class="slide"><h1> End of Presentation </h1></div>';
+        bodyHtml = '<p-slide><h1> End of Presentation </h1></p-slide>';
     }
     else {
-        var numberOfSlides = body.length;
         var selectedSlideAst = body[slideMeta.slideNumber]; // select the slide
         selectedSlideAst.block.nodes.unshift(mixins);       // enable mixins
         //console.log(JSON.stringify(selectedSlideAst, null, '  '))
@@ -153,7 +153,8 @@ function getSlideBody(src, filename, slideMeta) {
         div.innerHTML = bodyHtml;
         for (let i = 0; i < parsedAnimationList.length; ++i) {
             let item = parsedAnimationList[i];
-            div.querySelector(item.target).classList.add('hidden');
+            let target = div.querySelector(item.target);
+            if (target) target.classList.add('hidden');
         }
         bodyHtml = div.innerHTML;   // replace with the updated html
     }

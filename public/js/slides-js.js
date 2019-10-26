@@ -1,5 +1,6 @@
-let slideNumber, animationList, numberOfSlides, stack;
+let slideNumber, animationList, totalAnimations, numberOfSlides, stack;
 
+/** Hook up the listeners **/
 window.onload = function() {
     document.getElementById('slide-control-prev').onclick = prevClick;
     document.getElementById('slide-control-next').onclick = nextClick;
@@ -9,33 +10,27 @@ window.onload = function() {
 /** Load data **/
 function loadSlide(newSlideNumber) {
     let target = `${getLoc}/${newSlideNumber}`;
-    console.log(target);
     $.get(target, function(data, status){
         if (data.err) {
             return;
         } else {
-            console.log("Data: " + JSON.stringify(data) + "\nStatus: " + status);
-            //aspectRatio = eval(data.aspectRatio);
-            //slideHead = unescape(data.slideHead);
-            //slideTitle = data.slideTitle;
+            //console.log("Data: " + JSON.stringify(data) + "\nStatus: " + status);
             slideBody = unescape(data.slideBody);
             slideNumber = parseInt(data.slideNumber);
             numberOfSlides = data.numberOfSlides;
-            animationList = data.animationList;
+            animationList = data.animationList || [];
+            totalAnimations = animationList.length;
 
             document.querySelector('.slide').innerHTML = slideBody;
             document.querySelector('#slide-progress-indicator').innerHTML = `${slideNumber} / ${numberOfSlides}`;
 
-            resizeSlide();
+            updateSlide();
             initAnimations();
         }
     });
 }
 
 /** Slide Playback Controls **/
-//console.log(slideNumber);
-//console.log(animationList);
-
 function unanimate(item) {
     $(item.target).removeClass('animated').addClass('hidden').addClass(item.type);
 }
@@ -56,33 +51,35 @@ function initAnimations() {
     while (animationList.length > 0 && animationList[0].trigger != 'onClick') {
         let item = animationList.shift();
         animate(item);
+        stack.push(item);   // add to history stack
     }
+    document.querySelector('#animation-progress-indicator').innerHTML = `${stack.length} / ${totalAnimations}`;
 }
 
 function prevClick(event) {
     if (stack.length == 0) {
         // move on to previous slide
         loadSlide(slideNumber-1);
-        //window.location.href=`${getLoc}/${slideNumber-1}`;
     }
     else {  // we only undo 1 animation at a time
         let item = stack.pop();
         unanimate(item);
         animationList.unshift(item);   // push back into animation deque to be replayed
     }
+    document.querySelector('#animation-progress-indicator').innerHTML = `${stack.length} / ${totalAnimations}`;
 }
 
 function nextClick(event) {
     if (animationList.length == 0) {
         // move on to next slide
         loadSlide(slideNumber+1);
-        //window.location.href=`${getLoc}/${slideNumber+1}`;
     }
     else do {
         let item = animationList.shift();
         animate(item);
         stack.push(item);   // add to history stack
     } while (animationList.length > 0 && animationList[0].trigger != 'onClick');
+    document.querySelector('#animation-progress-indicator').innerHTML = `${stack.length} / ${totalAnimations}`;
 }
 
 $(document).ready(function() {
@@ -112,19 +109,6 @@ function presentFullscreen() {
     requestFullScreen(elem);
 }
 
-function resizeSlide() {
-    let slide = document.querySelector('.slide');
-
-    let maxWidth  = 0.8 * (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth),
-        maxHeight = 0.8 * (window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight);
-    if (maxWidth > maxHeight) slide.style.height = maxHeight, slide.style.width  = maxHeight * aspectRatio;
-    else                      slide.style.width  = maxWidth , slide.style.height = maxWidth  / aspectRatio;
-
-    console.log(slide);
-    console.log(aspectRatio);
-    console.log(maxWidth + " x " + maxHeight);
-}
-
 document.onfullscreenchange = function ( event ) {
     let sidebar = document.querySelector('.sidebar');
     let slideControls = document.querySelector('.slide-controls');
@@ -136,15 +120,56 @@ document.onfullscreenchange = function ( event ) {
 
         let maxWidth = screen.availWidth,
             maxHeight = screen.availHeight;
-        if (maxWidth > maxHeight) slide.style.height = maxHeight, slide.style.width  = maxHeight * aspectRatio;
-        else                      slide.style.width  = maxWidth , slide.style.height = maxWidth  / aspectRatio;
-        console.log(maxWidth, maxHeight);
+        resizeSlide(maxWidth, maxHeight);
 
     } else {
         sidebar.style.display = 'initial';
         slideControls.style.display = 'initial';
-        resizeSlide();
-        console.log(maxWidth, maxHeight);
+        updateSlide();
     }
 };
 
+/** Slide Geometry Manipulators */
+function updateSlide() {
+    let maxWidth  = 0.8 * (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth),
+        maxHeight = 0.8 * (window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight);
+
+    resizeSlide(maxWidth, maxHeight);
+    scaleSlideText();
+}
+
+function resizeSlide(maxWidth, maxHeight) {
+    let slide = document.querySelector('.slide');
+
+    if (maxWidth > maxHeight) slide.style.height = maxHeight, slide.style.width  = maxHeight * aspectRatio;
+    else                      slide.style.width  = maxWidth , slide.style.height = maxWidth  / aspectRatio;
+}
+
+function scaleSlideText() {
+    let slide = document.querySelector('.slide');
+    let width = parseInt(slide.style.width),
+        height = parseInt(slide.style.height);
+
+    // we'll only need to fit height, since width is wrapped
+    let lo = 0, hi = parseInt(height);
+    console.log('seed: ' + lo + ' - ' + hi);
+    while (hi - lo > 1) {
+        let mid = (lo + hi)/2;
+
+        slide.style.fontSize = mid; // since all text are based on em
+        let contentHeight = slide.scrollHeight;
+        if (contentHeight <= height) lo = mid;
+        else hi = mid;
+
+        console.log(`lo ${lo} hi ${hi} :: mid ${mid} cur: ${contentHeight} vs tgt: ${height}`);
+    }
+    let scaledEm = lo;
+
+    // sanity check, make sure the unit isn't greater than 1/25 of the slide
+    let maxEm = (height/25.0) / 1.17;
+    console.log('max ' + maxEm);
+    scaledEm = Math.min(scaledEm, maxEm);
+
+    slide.style.fontSize = scaledEm + 'px'; // since all text are based on em
+    console.log('setting font size to ' + scaledEm + ' = ' + slide.style.fontSize);
+}
