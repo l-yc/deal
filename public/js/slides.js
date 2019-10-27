@@ -30,7 +30,7 @@ $(document).ready(function() {
     });
 
     let urlParams = new URLSearchParams(window.location.search);
-    slideNumber = urlParams.get('slide') || 0;
+    slideNumber = parseInt(urlParams.get('slide')) || 0;
 
     loadSlide(slideNumber);
 });
@@ -49,6 +49,7 @@ async function loadPresentation() {
                 presentation = data;
                 Object.freeze(presentation);    // we don't want to ever modify the original object
                 numberOfSlides = presentation.slides.length;
+                document.querySelector('#slide-title').innerHTML = presentation.meta.name;
 
                 let link = document.createElement('link');
                 link.rel = 'stylesheet';
