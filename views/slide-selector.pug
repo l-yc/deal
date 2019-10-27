@@ -1,5 +1,18 @@
-h1 Available slides
-ul
-    each slide in slides
-        li
-            a(href="/slides/"+slide.slice(0,-4)+"/0")=slide
+head
+    script(src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous")
+    link(rel='stylesheet' type='text/css' href='/css/slide-selector.css')
+    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css")
+    link(href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css", rel="stylesheet", integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN", crossorigin="anonymous")
+    script(src='/js/slide-selector.js')
+
+body.column.center
+    div.column(style="flex:1; width:80vw;")
+        h1 Available slides
+        div.column#directoryViewer
+            input#directoryPath(readonly value="/")
+            ul#directoryListing
+                li: a(href="#") dummy
+                //each slide in slides
+                    li
+                        a(href="/slides/"+slide.slice(0,-4)+"/0")=slide
+

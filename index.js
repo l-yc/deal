@@ -1,6 +1,7 @@
 const express = require('express');
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
+const url = require('url');
 const app = express();
 
 global.appRoot = __dirname;
@@ -10,22 +11,36 @@ app.set('view engine', 'pug');
 app.use('/slides', require('./controllers/slides.js')(express));
 
 app.get('/', (req, res) => {
-  res.render('index');
+    //res.render('index');
+    res.redirect('/slide-selector');
 });
 
 app.get('/slide-selector', (req, res) => {
-    var filePath = path.join(appRoot + "/tests");
-    fs.readdir(filePath, (err, files) => {
-        console.log(files);
-        res.render('slide-selector', { slides : files });
-    });
+    res.render('slide-selector');
+
+    //let filePath = path.join(appRoot, "/tests");
+    //let filePath = path.join(appRoot, query.path || "");
+});
+
+app.get('/slide-selector/data', (req, res) => {
+    let query = url.parse(req.url,true).query;
+
+    let filePath = path.join(appRoot, query.path || "");
+    fs.readdir(filePath, { withFileTypes: true })
+        .then(files => {
+            console.log(files);
+            files = files
+                .filter(f => { return f.isDirectory() || (f.isFile() && path.extname(f.name) === '.pug') })
+                .map(f => { f.isDirectory = f.isDirectory(); return f });
+            res.json(files);
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({ error: true, message: err });
+        });
 });
 
 app.use(function(req, res, next) {
-    //var err = new Error('Not Found');
-    //err.status = 404;
-    //next(err);
-
     res.status = 404;
     res.render('404');
 });
