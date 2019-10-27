@@ -4,13 +4,7 @@ let slideNumber,
     totalAnimations,
     numberOfSlides,
     stack,
-    urlParams,
     presentation = null;
-
-//            if (slideMeta.slideNumber < 0 || slideMeta.slideNumber >= body.length) {
-//                // Invalid slide number, we'll just assume it's the end of presentation
-//                bodyHtml = '<p-slide><h1> End of Presentation </h1></p-slide>';
-//            }
 
 /** Hook up the listeners **/
 //window.onload = function() {
@@ -24,10 +18,9 @@ $(document).ready(function() {
     $(document).on('click', '#slide-control-prev', prevClick);
     $(document).on('click', '#slide-control-next', nextClick);
     $(document).on('click', '#slide-control-fullscreen', presentFullscreen);
-    
-    urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('slideNumber') == null) urlParams.set('slideNumber', 0);
-    slideNumber = urlParams.get('slideNumber');
+
+    let urlParams = new URLSearchParams(window.location.search);
+    slideNumber = urlParams.get('slide') || 0;
 
     loadSlide(slideNumber);
 });
@@ -49,7 +42,7 @@ async function loadPresentation() {
                 let link = document.createElement('link');
                 link.rel = 'stylesheet';
                 link.type = 'text/css';
-                link.href = '/css/' + presentation.meta.theme + '.css';
+                link.href = '/themes/' + presentation.meta.theme + '.css';
                 link.media = 'all';
                 document.head.appendChild(link);
 
@@ -60,20 +53,33 @@ async function loadPresentation() {
 }
 
 async function loadSlide(newSlideNumber) {
-    urlParams.set('slideNumber', newSlideNumber);
-    //slideNumber = urlParams.get('slideNumber');
-
     if (presentation == null) await loadPresentation();
 
-    slide = presentation.slides[newSlideNumber];
-    slideBody = unescape(slide.slideBody);
-    slideNumber = parseInt(slide.slideNumber);
-    animationList = slide.animationList;
-    totalAnimations = animationList.length;
+    if (newSlideNumber < 0 || newSlideNumber > numberOfSlides)
+        return;
 
-    document.querySelector('.slide').innerHTML = slideBody;
-    document.querySelector('#slide-progress-indicator').innerHTML = `${slideNumber} / ${numberOfSlides}`;
+    window.history.replaceState({slide: newSlideNumber}, "Slide "+newSlideNumber, "?slide="+newSlideNumber);
+    if (newSlideNumber === numberOfSlides) {
+        // Invalid slide number, we'll just assume it's the end of presentation
+        slide = null;
+        slideBody  = '<p-slide><h1> End of Presentation </h1></p-slide>';
+        slideNumber = numberOfSlides;
+        animationList = [];
+        totalAnimations = 0;
 
+        document.querySelector('.slide').innerHTML = slideBody;
+        document.querySelector('#slide-progress-indicator').innerHTML = 'End';
+    } else {
+        slide = presentation.slides[newSlideNumber];
+        slideBody = unescape(slide.slideBody);
+        slideNumber = parseInt(slide.slideNumber);
+        animationList = slide.animationList;
+        totalAnimations = animationList.length;
+
+        document.querySelector('.slide').innerHTML = slideBody;
+        document.querySelector('#slide-progress-indicator').innerHTML = `${slideNumber+1} / ${numberOfSlides}`;
+    }
+    console.log('refreshing');
     updateSlide();
     initAnimations();
 }
