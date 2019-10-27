@@ -28,7 +28,7 @@ app.get('/browse/data', (req, res) => {
     let filePath = path.join(appRoot, query.path || "");
     fs.readdir(filePath, { withFileTypes: true })
         .then(files => {
-            console.log(files);
+            //console.log(files);
             files = files
                 .filter(f => { return f.isDirectory() || (f.isFile() && path.extname(f.name) === '.pug') })
                 .map(f => { f.isDirectory = f.isDirectory(); return f });
