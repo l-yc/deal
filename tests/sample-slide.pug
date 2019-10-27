@@ -64,12 +64,18 @@ body
 
     p-slide
         h1 How to use PugSlides?
-        p With p-slide, you can code slides in #[a(href="https://pugjs.org/api/getting-started.html") pug]
-        p You can configure settings in #[strong head]
-        p Or even themes by creating your own stylesheets
-        p If you are a coder, you can add javascript to your slides too
+        .row
+            .column(style="flex:1")
+                p With p-slide, you can code slides in #[a(href="https://pugjs.org/api/getting-started.html") pug]
+                p You can configure settings in #[strong head]
+            .column(style="flex:1")
+                p Or even themes by creating your own stylesheets
+                p If you are a coder, you can add javascript to your slides too
         animation-list
-            li.onClick.fadeIn(target="p")
+            li.onClick.fadeIn(target=".column:nth-child(1) p:nth-child(1)")
+            li.onClick.fadeIn(target=".column:nth-child(1) p:nth-child(2)")
+            li.onClick.fadeIn(target=".column:nth-child(2) p:nth-child(1)")
+            li.onClick.fadeIn(target=".column:nth-child(2) p:nth-child(2)")
 
     p-slide
         h1 Insert Title

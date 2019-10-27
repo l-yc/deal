@@ -1,33 +1,81 @@
-let slideNumber, animationList, totalAnimations, numberOfSlides, stack;
+let slideNumber,
+    slide,
+    animationList,
+    totalAnimations,
+    numberOfSlides,
+    stack,
+    urlParams,
+    presentation = null;
+
+//            if (slideMeta.slideNumber < 0 || slideMeta.slideNumber >= body.length) {
+//                // Invalid slide number, we'll just assume it's the end of presentation
+//                bodyHtml = '<p-slide><h1> End of Presentation </h1></p-slide>';
+//            }
 
 /** Hook up the listeners **/
-window.onload = function() {
-    document.getElementById('slide-control-prev').onclick = prevClick;
-    document.getElementById('slide-control-next').onclick = nextClick;
-    document.getElementById('slide-control-fullscreen').onclick = presentFullscreen;
-}
+//window.onload = function() {
+//    document.getElementById('slide-control-prev').onclick = prevClick;
+//    document.getElementById('slide-control-next').onclick = nextClick;
+//    document.getElementById('slide-control-fullscreen').onclick = presentFullscreen;
+//}
+
+$(document).ready(function() {
+    $(document).on('click', '.slide', nextClick);
+    $(document).on('click', '#slide-control-prev', prevClick);
+    $(document).on('click', '#slide-control-next', nextClick);
+    $(document).on('click', '#slide-control-fullscreen', presentFullscreen);
+    
+    urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('slideNumber') == null) urlParams.set('slideNumber', 0);
+    slideNumber = urlParams.get('slideNumber');
+
+    loadSlide(slideNumber);
+});
 
 /** Load data **/
-function loadSlide(newSlideNumber) {
-    let target = `${getLoc}/${newSlideNumber}`;
-    $.get(target, function(data, status){
-        if (data.err) {
-            return;
-        } else {
-            //console.log("Data: " + JSON.stringify(data) + "\nStatus: " + status);
-            slideBody = unescape(data.slideBody);
-            slideNumber = parseInt(data.slideNumber);
-            numberOfSlides = data.numberOfSlides;
-            animationList = data.animationList || [];
-            totalAnimations = animationList.length;
+async function loadPresentation() {
+    let target = window.location.href.split("?")[0].split("#")[0] + '/data';
+    console.log('querying ' + target);
+    return new Promise((resolve, reject) => {
+        $.get(target, function(data, status){
+            if (data.error) {
+                reject(data.message);
+                return;
+            } else {
+                //console.log("Data: " + JSON.stringify(data) + "\nStatus: " + status);
+                presentation = data;
+                numberOfSlides = presentation.slides.length;
 
-            document.querySelector('.slide').innerHTML = slideBody;
-            document.querySelector('#slide-progress-indicator').innerHTML = `${slideNumber} / ${numberOfSlides}`;
+                let link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '/css/' + presentation.meta.theme + '.css';
+                link.media = 'all';
+                document.head.appendChild(link);
 
-            updateSlide();
-            initAnimations();
-        }
+                resolve();
+            }
+        });
     });
+}
+
+async function loadSlide(newSlideNumber) {
+    urlParams.set('slideNumber', newSlideNumber);
+    //slideNumber = urlParams.get('slideNumber');
+
+    if (presentation == null) await loadPresentation();
+
+    slide = presentation.slides[newSlideNumber];
+    slideBody = unescape(slide.slideBody);
+    slideNumber = parseInt(slide.slideNumber);
+    animationList = slide.animationList;
+    totalAnimations = animationList.length;
+
+    document.querySelector('.slide').innerHTML = slideBody;
+    document.querySelector('#slide-progress-indicator').innerHTML = `${slideNumber} / ${numberOfSlides}`;
+
+    updateSlide();
+    initAnimations();
 }
 
 /** Slide Playback Controls **/
@@ -101,12 +149,6 @@ async function nextClick(event) {
     document.querySelector('#animation-progress-indicator').innerHTML = `${stack.length} / ${totalAnimations}`;
 }
 
-$(document).ready(function() {
-    loadSlide(0);
-});
-
-$(document).on('click', '.slide', nextClick);
-
 /** Other Slide Controls **/
 function requestFullScreen(element) {
     // Supports most browsers and their versions.
@@ -160,8 +202,8 @@ function updateSlide() {
 function resizeSlide(maxWidth, maxHeight) {
     let slide = document.querySelector('.slide');
 
-    if (maxWidth > maxHeight) slide.style.height = maxHeight, slide.style.width  = maxHeight * aspectRatio;
-    else                      slide.style.width  = maxWidth , slide.style.height = maxWidth  / aspectRatio;
+    if (maxWidth > maxHeight) slide.style.height = maxHeight, slide.style.width  = maxHeight * presentation.meta.aspectRatio;
+    else                      slide.style.width  = maxWidth , slide.style.height = maxWidth  / presentation.meta.aspectRatio;
 }
 
 function scaleSlideText() {
