@@ -22,9 +22,16 @@ $(document).ready(function() {
     //            break;
     //    }
     //});
+    window.onpopstate = function(event) {
+        console.log("location: " + document.location + ", state: " + JSON.stringify(event.state));
+        let urlParams = new URLSearchParams(window.location.search);
+        let targetPath = ('path' in urlParams ? decodeURIComponent(urlParams.get('path')) : '/');
+
+        loadDirectory(targetPath)
+    };
 
     let urlParams = new URLSearchParams(window.location.search);
-    let targetPath = parseInt(urlParams.get('path')) || '/';
+    let targetPath = ('path' in urlParams ? decodeURIComponent(urlParams.get('path')) : '/');
 
     loadDirectory(targetPath)
 });
@@ -32,7 +39,7 @@ $(document).ready(function() {
 /** Load data **/
 async function loadDirectory(targetPath) {
     let target = window.location.origin + '/browse/data';
-    console.log('querying ' + target);
+    console.log('querying ' + target + ' with ' + targetPath);
     let request = new Promise((resolve, reject) => {
         $.get(target, { path: targetPath }, function(data, status){
             if (data.error) {
@@ -41,18 +48,6 @@ async function loadDirectory(targetPath) {
             } else {
                 currentPath = targetPath;
                 console.log("Data: " + JSON.stringify(data) + "\nStatus: " + status);
-                //presentation = data;
-                //Object.freeze(presentation);    // we don't want to ever modify the original object
-                //numberOfSlides = presentation.slides.length;
-                //document.querySelector('#slide-title').innerHTML = presentation.meta.name;
-
-                //let link = document.createElement('link');
-                //link.rel = 'stylesheet';
-                //link.type = 'text/css';
-                //link.href = '/themes/' + presentation.meta.theme + '.css';
-                //link.media = 'all';
-                //document.head.appendChild(link);
-
                 resolve(data);
             }
         });
@@ -80,9 +75,20 @@ async function populateDirectoryViewer(data) {
 
     directoryPath.value = currentPath;
 
+    window.history.pushState({path: currentPath}, 'navigate', "?path=" + encodeURIComponent(currentPath));
     while (directoryListing.firstChild) {
         directoryListing.removeChild(directoryListing.firstChild);
     }
+
+    if (currentPath !== '/') {   // ..
+        let li = document.createElement('li');
+        let a = document.createElement('a');
+        a.onclick = event => loadDirectory(currentPath.split('/').slice(0,-2).join('/') + '/');
+        a.innerText = '..';
+        li.appendChild(a);
+        directoryListing.appendChild(li);
+    }
+
     data.forEach(item => {
         let li = document.createElement('li');
         let a = document.createElement('a');
