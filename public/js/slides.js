@@ -7,17 +7,27 @@ let slideNumber,
     presentation = null;
 
 /** Hook up the listeners **/
-//window.onload = function() {
-//    document.getElementById('slide-control-prev').onclick = prevClick;
-//    document.getElementById('slide-control-next').onclick = nextClick;
-//    document.getElementById('slide-control-fullscreen').onclick = presentFullscreen;
-//}
-
 $(document).ready(function() {
     $(document).on('click', '.slide', nextClick);
     $(document).on('click', '#slide-control-prev', prevClick);
     $(document).on('click', '#slide-control-next', nextClick);
     $(document).on('click', '#slide-control-fullscreen', presentFullscreen);
+    $(document).keydown(function(event) {
+        event = event || window.event;
+        switch (event.keyCode) {
+            case 37:    // left
+            case 38:    // up
+                prevClick();
+                break;
+
+            case 39:    // right
+            case 40:    // down
+            case 32:    // space
+            case 13:    // enter
+                nextClick();
+                break;
+        }
+    });
 
     let urlParams = new URLSearchParams(window.location.search);
     slideNumber = urlParams.get('slide') || 0;
