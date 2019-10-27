@@ -31,7 +31,7 @@ $(document).ready(function() {
 
 /** Load data **/
 async function loadDirectory(targetPath) {
-    let target = window.location.href.split("?")[0].split("#")[0] + '/data';
+    let target = window.location.origin + '/browse/data';
     console.log('querying ' + target);
     let request = new Promise((resolve, reject) => {
         $.get(target, { path: targetPath }, function(data, status){
@@ -69,7 +69,7 @@ async function loadDirectory(targetPath) {
 }
 
 async function loadFile(targetPath) {
-    window.location = window.location.origin + '/slide-viewer/view?name=' + encodeURIComponent(targetPath);
+    window.location = window.location.origin + '/slides/view?name=' + encodeURIComponent(targetPath);
 }
 
 /** Update UI **/
