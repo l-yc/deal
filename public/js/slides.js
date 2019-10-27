@@ -1,4 +1,5 @@
-let slideNumber,
+let name,
+    slideNumber,
     slide,
     animationList,
     totalAnimations,
@@ -30,6 +31,7 @@ $(document).ready(function() {
     });
 
     let urlParams = new URLSearchParams(window.location.search);
+    name = decodeURIComponent(urlParams.get('name')) || 0;
     slideNumber = parseInt(urlParams.get('slide')) || 0;
 
     loadSlide(slideNumber);
@@ -37,10 +39,10 @@ $(document).ready(function() {
 
 /** Load data **/
 async function loadPresentation() {
-    let target = window.location.href.split("?")[0].split("#")[0] + '/data';
+    let target = window.location.origin + '/slides/data';
     console.log('querying ' + target);
     return new Promise((resolve, reject) => {
-        $.get(target, function(data, status){
+        $.get(target, { name: name }, function(data, status){
             if (data.error) {
                 reject(data.message);
                 return;
@@ -71,7 +73,7 @@ async function loadSlide(newSlideNumber) {
         return;
 
     console.log('load slide ' + newSlideNumber);
-    window.history.replaceState({slide: newSlideNumber}, "Slide "+newSlideNumber, "?slide="+newSlideNumber);
+    window.history.replaceState({name: name, slide: newSlideNumber}, "Slide "+newSlideNumber, "?name=" + encodeURIComponent(name) + "&slide="+newSlideNumber);
     if (newSlideNumber === numberOfSlides) {
         // Invalid slide number, we'll just assume it's the end of presentation
         slide = null;
@@ -84,7 +86,7 @@ async function loadSlide(newSlideNumber) {
         document.querySelector('#slide-progress-indicator').innerHTML = `${slideNumber} / ${numberOfSlides}`;
     } else {
         slide = JSON.parse(JSON.stringify(presentation.slides[newSlideNumber]));    // deep copy for manipulation
-        slideBody = unescape(slide.slideBody);
+        slideBody = decodeURIComponent(slide.slideBody);
         slideNumber = parseInt(slide.slideNumber);
         animationList = slide.animationList;
         totalAnimations = animationList.length;

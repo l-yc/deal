@@ -12,17 +12,17 @@ app.use('/slides', require('./controllers/slides.js')(express));
 
 app.get('/', (req, res) => {
     //res.render('index');
-    res.redirect('/slide-selector');
+    res.redirect('/browse/view');
 });
 
-app.get('/slide-selector', (req, res) => {
+app.get('/browse/view', (req, res) => {
     res.render('slide-selector');
 
     //let filePath = path.join(appRoot, "/tests");
     //let filePath = path.join(appRoot, query.path || "");
 });
 
-app.get('/slide-selector/data', (req, res) => {
+app.get('/browse/data', (req, res) => {
     let query = url.parse(req.url,true).query;
 
     let filePath = path.join(appRoot, query.path || "");

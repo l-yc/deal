@@ -1,4 +1,5 @@
 var fs = require('fs').promises;
+const url = require('url');
 var path = require('path');
 
 var parse = require('pug-parser');
@@ -9,12 +10,16 @@ var generateCode = require('pug-code-gen');
 module.exports = function(express) {
     var router = express.Router();
 
-    router.get('/:filename/', (req, res, next) => {
+    router.get('/view', (req, res, next) => {
         res.render('slide-viewer');
     });
 
-    router.get('/:filename/data', (req, res) => {
-        getPresentation(req.params.filename)
+    router.get('/data', (req, res) => {
+        let query = url.parse(req.url,true).query;
+
+        let filePath = decodeURIComponent(query.name);
+
+        getPresentation(filePath)
             .then(presentation => {
                 console.log(presentation);
                 res.json(presentation);
@@ -22,7 +27,6 @@ module.exports = function(express) {
             .catch(err => {
                 console.log(err);
                 res.status(500).json({ error: true, message: "couldn't retrieve presentation" });
-                next();
             })
     });
 
@@ -68,9 +72,8 @@ module.exports = function(express) {
     return router;
 };
 
-function getPresentation(name) {
-    var filename = name + '.pug';
-    var filePath = path.join(appRoot + "/tests", filename);
+function getPresentation(relFilePath) {
+    let filePath = path.join(appRoot, relFilePath);
 
     return new Promise((resolve, reject) => {
         fs.readFile(filePath, {encoding: 'utf-8'})
@@ -78,8 +81,8 @@ function getPresentation(name) {
                 let presentation = {};
 
                 // Parse the file into a json object
-                let tokens = lex(src, {filename});
-                let ast = parse(tokens, {filename, src});
+                let tokens = lex(src, {filePath});
+                let ast = parse(tokens, {filePath, src});
 
                 // Parse the head
                 let head = ast.nodes.find((e) => e.name == 'head');
@@ -92,6 +95,7 @@ function getPresentation(name) {
                 })(eval(settings.find((e) => e.name=='aspectRatio').val).split(':'));
                 //let theme = '<link rel="stylesheet" type="text/css" href="/css/' + eval(settings.find((e) => e.name=='theme').val) + '.css">';
                 let theme = eval(settings.find((e) => e.name=='theme').val);
+                let name = eval(settings.find((e) => e.name=='name').val);
 
                 presentation.meta = {   // set all the meta information of the presentation
                     theme: theme,
