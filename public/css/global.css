@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css?family=Titillium+Web');
+
+html, body {
+    margin: 0px;
+    height: 100%;
+}
+
+/** Helper classes for layout **/
+.column {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.row {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.center {
+    align-items: center;
+    justify-content: center;
+}
+
+:not(.slide) > * {
+    font-family: 'Titillium Web', sans-serif;
+}
+
+/** Global style classes **/
+a.button-link {
+    padding: 10px;
+    text-decoration: none;
+    background-color: white;
+    color: black;
+    border: solid 2px black;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+    margin: 5px;
+}
+
+a.button-link:hover {
+    background-color: black;
+    color: white;
+}

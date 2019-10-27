@@ -1,0 +1,51 @@
+@import "global.css";
+
+input {
+    padding: 2px 8px;
+
+    border: solid 2px lightgrey;
+    border-radius: 4px;
+}
+
+#directoryViewer {
+    background-color: #EEEEEE;
+}
+
+#directoryPath {
+    margin: 2px;
+
+    font-size: 18px;
+}
+
+#directoryListing {
+    margin: 2px;
+    padding: 2px;
+
+    border: solid 2px lightgrey;
+    border-radius: 4px;
+
+    font-size: 18px;
+}
+
+#directoryListing > li {
+    color: grey;
+
+    list-style-type: none;
+    padding: 2px 8px;
+    
+    border-radius: 4px;
+
+    transition: all ease-in-out 0.2s;
+}
+
+#directoryListing > li:hover {
+    background-color: lightgrey;
+    color: black;
+
+    cursor: pointer;
+}
+
+#directoryListing > li > a {
+    display: flex;
+    text-decoration: none;
+}
