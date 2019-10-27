@@ -45,20 +45,20 @@ You will need to have the following
 
 Clone this repository
 
-```
+```shell
 git clone https://github.com/l-yc/pug-slides
 ```
 
 Install the dependencies
 
-```
+```shell
 cd pug-slides
 npm install
 ```
 
 Start the app
 
-```
+```shell
 npm start
 ```
 
@@ -75,7 +75,7 @@ Clicking on the expand button enables fullscreen mode.
 
 To create a new presentation, create a new `.pug` file in `tests/`. An minimal example is shown below.
 
-```
+```pug
 head
     slideSettings(aspectRatio="4:3" theme="default")
 
@@ -115,19 +115,23 @@ Slide settings include:
 
 Under the body tag, you can write your slides. Each slides should be nested under a `p-slide` tag, which can be assigned classes to specify its layout. Within the `p-slide` tag, any standard html elements can be used.  You may also organise your content into rows and columns using the provided `.row` and `.column` classes and specify their ratios using like so
 
-```
+```pug
 // 1:2 ratio
 .row
-	.column(flex=0.5)
-	.column(flex=1)
+    .column(style="flex:0.5")
+    .column(style="flex:1")
 ```
 
 In addition, you can also include an `animation-list` tag, which will contain a list of animations.
 
 Each animation item will have the following syntax:
-```li.<trigger>.<name>(target="<selector>" <any additional options in key-value format>)```
+```pug
+li.<trigger>.<name>(target="<selector>" <any additional options in key-value format>)
+```
 or
-```li(class="<trigger> <name>" target="<selector>" <any additional options in key-value format>)```
+```pug
+li(class="<trigger> <name>" target="<selector>" <any additional options in key-value format>)
+```
 
 The order of trigger, name and parentheses enclosed options are interchangeable.
 
