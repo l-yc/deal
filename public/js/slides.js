@@ -190,30 +190,37 @@ function presentFullscreen() {
     requestFullScreen(elem);
 }
 
-document.onfullscreenchange = function ( event ) {
+let resizeTimer; // Set resizeTimer to empty so it resets on page load
+window.onresize = function(event) {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(updateSlide, 100)
+}
+
+//document.onfullscreenchange = function ( event ) {
+//    updateSlide();
+//};
+
+/** Slide Geometry Manipulators */
+function updateSlide() {
     let sidebar = document.querySelector('.sidebar');
     let slideControls = document.querySelector('.slide-controls');
 
-    if (document.fullscreen) {
+    let maxWidth, maxHeight;
+    if (document.fullscreenElement) {
         // hide all the unnecessary stuff
         sidebar.style.display = 'none';
         slideControls.style.display = 'none';
 
-        let maxWidth = screen.availWidth,
-            maxHeight = screen.availHeight;
-        resizeSlide(maxWidth, maxHeight);
-
+        maxWidth = screen.availWidth,
+        maxHeight = screen.availHeight;
     } else {
         sidebar.style.display = 'initial';
         slideControls.style.display = 'initial';
-        updateSlide();
-    }
-};
 
-/** Slide Geometry Manipulators */
-function updateSlide() {
-    let maxWidth  = 0.8 * (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth),
+        maxWidth  = 0.8 * (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth),
         maxHeight = 0.8 * (window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight);
+    }
+
 
     resizeSlide(maxWidth, maxHeight);
     scaleSlideText();

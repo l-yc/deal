@@ -77,7 +77,7 @@ To create a new presentation, create a new `.pug` file in `tests/`. An minimal e
 
 ```pug
 head
-    slideSettings(aspectRatio="4:3" theme="default")
+    slideSettings(name="sample-slide" aspectRatio="4:3" theme="default")
 
 body
     p-slide.title
@@ -107,9 +107,10 @@ body
             li.onClick.fadeIn(target=".column:nth-child(2) p:nth-child(2)")
 ```
 
-A presentation file is split into 2 parts, the head and the body. Under the head tag, you can include the various slide settings.
+A presentation file is split into 2 parts, the head and the body. Under the head tag, you can must include the various slide settings.
 
 Slide settings include:
+* name: Name of presentation
 * aspectRatio: Ratio of width to height of slide
 * theme: Theme to use for the presentation
 
