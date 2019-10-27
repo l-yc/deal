@@ -37,6 +37,7 @@ async function loadPresentation() {
             } else {
                 //console.log("Data: " + JSON.stringify(data) + "\nStatus: " + status);
                 presentation = data;
+                Object.freeze(presentation);    // we don't want to ever modify the original object
                 numberOfSlides = presentation.slides.length;
 
                 let link = document.createElement('link');
@@ -58,6 +59,7 @@ async function loadSlide(newSlideNumber) {
     if (newSlideNumber < 0 || newSlideNumber > numberOfSlides)
         return;
 
+    console.log('load slide ' + newSlideNumber);
     window.history.replaceState({slide: newSlideNumber}, "Slide "+newSlideNumber, "?slide="+newSlideNumber);
     if (newSlideNumber === numberOfSlides) {
         // Invalid slide number, we'll just assume it's the end of presentation
@@ -68,18 +70,17 @@ async function loadSlide(newSlideNumber) {
         totalAnimations = 0;
 
         document.querySelector('.slide').innerHTML = slideBody;
-        document.querySelector('#slide-progress-indicator').innerHTML = 'End';
+        document.querySelector('#slide-progress-indicator').innerHTML = `${slideNumber} / ${numberOfSlides}`;
     } else {
-        slide = presentation.slides[newSlideNumber];
+        slide = JSON.parse(JSON.stringify(presentation.slides[newSlideNumber]));    // deep copy for manipulation
         slideBody = unescape(slide.slideBody);
         slideNumber = parseInt(slide.slideNumber);
         animationList = slide.animationList;
         totalAnimations = animationList.length;
 
         document.querySelector('.slide').innerHTML = slideBody;
-        document.querySelector('#slide-progress-indicator').innerHTML = `${slideNumber+1} / ${numberOfSlides}`;
+        document.querySelector('#slide-progress-indicator').innerHTML = `${slideNumber} / ${numberOfSlides}`;
     }
-    console.log('refreshing');
     updateSlide();
     initAnimations();
 }
