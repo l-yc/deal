@@ -45,15 +45,17 @@ async function initSlideControls() {
 
 async function initSlideHeader() {
     $('#slide-header-sidebar-button').click(function() {
-        let sidebar = $('#sidebar');
-        let w = sidebar.attr("width-default");
-        //console.log(sidebar.width() + " vs " + w);
-        if (sidebar.width() == 0) {
-            sidebar.show();
-            sidebar.animate({width: w}, "slow");
+        let sidebar = document.querySelector('#sidebar');
+        if (sidebar.style.opacity == 1) {
+            sidebar.ontransitionend = () => { 
+                sidebar.ontransitionend = null;
+                sidebar.style.opacity = 0;
+            }
+
+            sidebar.style.marginLeft = -sidebar.offsetWidth;
         } else {
-            sidebar.attr('width-default', sidebar.width());
-            sidebar.animate({width: 0}, "slow", function() {sidebar.hide();});
+            sidebar.style.opacity = 1;
+            sidebar.style.marginLeft = 0;
 		}
     });
 }

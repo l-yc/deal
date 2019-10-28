@@ -34,6 +34,9 @@ a.slide-header-button {
     background-color: white;
     border-right: solid 2px lightgrey;
     width: 200px;
+
+    opacity: 1;
+    transition: margin-left 500ms;
 }
 
 #sidebar .sidebar-nav a {
