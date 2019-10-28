@@ -29,10 +29,11 @@ Features:
 * Text-based animations with [animate.css](https://github.com/daneden/animate.css) with support for:
     * triggers: `onClick`, `withPrevious`, `afterPrevious` and `fromPrevious`
 * Pug-based syntax for writing slides
+* Run as a single binary
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See usage for notes on using the project.
 
 ### Prerequisites
 
@@ -40,6 +41,7 @@ You will need to have the following
 * node.js
 * npm 
 * nodemon (for testing)
+* pkg (for building binaries)
 
 ### Installation
 
@@ -62,7 +64,22 @@ Start the app
 npm start
 ```
 
+To watch for edits
+```shell
+npm test
+```
+
+To rebuild binaries
+
+```shell
+npm run build
+```
+
 ## Usage
+
+### Running the app
+
+Pre-built binaries made with `pkg` are available in `builds/` for MacOS, Windows and Linux. Running the binary in a certain directory will allow you to browse all files under that directory.
 
 ### Slide Controls
 

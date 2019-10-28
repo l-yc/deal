@@ -46,7 +46,6 @@ async function loadDirectory(targetPath) {
                 reject(data.message);
                 return;
             } else {
-                currentPath = data.meta.path;   // use the resolved path
                 console.log("Data: " + JSON.stringify(data) + "\nStatus: " + status);
                 resolve(data);
             }
@@ -73,9 +72,14 @@ async function populateDirectoryViewer(data) {
     let directoryPath = document.querySelector('#directoryPath');
     let directoryListing = document.querySelector('#directoryListing');
 
-    directoryPath.value = currentPath;
 
-    window.history.pushState({path: currentPath}, 'navigate', "?path=" + encodeURIComponent(currentPath));
+    if (currentPath == '')
+        window.history.replaceState({path: currentPath}, 'navigate', "?path=" + encodeURIComponent(data.meta.path));
+    else
+        window.history.pushState({path: currentPath}, 'navigate', "?path=" + encodeURIComponent(data.meta.path));
+    currentPath = data.meta.path;   // use the resolved path
+    directoryPath.value = currentPath;  // update the ui
+
     while (directoryListing.firstChild) {
         directoryListing.removeChild(directoryListing.firstChild);
     }
