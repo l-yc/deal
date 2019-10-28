@@ -44,7 +44,7 @@ async function initSlideControls() {
 }
 
 async function initSlideHeader() {
-    $('#sidebar-menu-button').click(function() {
+    $('#slide-header-sidebar-button').click(function() {
         let sidebar = $('#sidebar');
         let w = sidebar.attr("width-default");
         //console.log(sidebar.width() + " vs " + w);

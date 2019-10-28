@@ -11,18 +11,20 @@
     text-align: center;
 }
 
-#sidebar-menu-button {
+a.slide-header-button {
     /* copy center style */
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px;
+    padding: 14px;
 
-    border-left: solid 2px lightgrey;
+    color: black;
+    text-decoration: none;
+
     transition: color ease-in-out 0.2s;
 }
 
-#sidebar-menu-button:hover {
+.slide-header-button:hover {
     color: grey;
     cursor: pointer;
 }
