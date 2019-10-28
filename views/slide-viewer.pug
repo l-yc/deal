@@ -1,28 +1,40 @@
 head
     script(src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous")
-    link(rel='stylesheet' type='text/css' href='/css/slides.css')
+    link(rel='stylesheet' type='text/css' href='/css/slide-viewer.css')
     link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css")
     link(href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css", rel="stylesheet", integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN", crossorigin="anonymous")
-    script(src='/js/slides.js')
+    script(src='/js/slide-viewer.js')
+
+    mixin navHeader(title)
+        a.row.center
+            div: strong #{title}
+            i.fa.fa-minus(aria-hidden="true")
+
 
 body.column
+    div.row#slide-header
+        a#sidebar-menu-button: i.fa.fa-bars(aria-hidden="true")
+        h1#slide-title
     div.row(style="flex:1")
-        div.column(style="background-color: red")
-            div.sidebar
-                h1 Sidebar
-                a.button-link(href="#") Fullscreen
-                div.slide-list
-                    p#slide-progress-indicator
-                    p#animation-progress-indicator
-        div.row(style="flex:1").center: div.column.center
-            div.slide-controls
-                h1#slide-title
+        div.column#sidebar
+            div.sidebar-nav
+                +navHeader("Presentation Info")
+                ul
+                    li Slide: #[span#slide-progress-indicator]
+                    li Animation: #[span#animation-progress-indicator]
+            div.sidebar-nav
+                +navHeader("Slide List")
+                ul#slide-list
+                    li Under Construction
+
+        div.column(style="flex:1")
+            div#slide-controls
                 div.row.center
                     a#slide-control-prev.slide-control-button: i.fa.fa-chevron-left(aria-hidden="true")
                     a#slide-control-next.slide-control-button: i.fa.fa-chevron-right(aria-hidden="true")
                     a#slide-control-fullscreen.slide-control-button: i.fa.fa-arrows-alt(aria-hidden="true")
-            //hr
-            div.ratio-container.slide
+            div.row.center
+                div.ratio-container.slide
             //div.ratio-container.slide(style='--ratio: calc(' + aspectRatio + ')') !{slideBody}
 
 //- https://github.com/IanLunn/Hover

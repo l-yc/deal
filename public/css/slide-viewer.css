@@ -1,6 +1,71 @@
 @import "global.css";
 
+/* Style the slide header */
+#slide-header {
+    background-color: white;
+    border-bottom: solid 2px lightgrey;
+}
+
+#slide-title {
+    flex: 1;
+    text-align: center;
+}
+
+#sidebar-menu-button {
+    /* copy center style */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+
+    border-left: solid 2px lightgrey;
+    transition: color ease-in-out 0.2s;
+}
+
+#sidebar-menu-button:hover {
+    color: grey;
+    cursor: pointer;
+}
+
 /* Style the sidebar */
+#sidebar {
+    background-color: white;
+    border-right: solid 2px lightgrey;
+    width: 200px;
+}
+
+#sidebar .sidebar-nav a {
+    border-bottom: solid 1px lightgrey;
+}
+
+#sidebar .sidebar-nav a:hover {
+    color: grey;
+    cursor: pointer;
+    transition: ease-in-out 0.2s;
+}
+
+#sidebar .sidebar-nav a div {
+    flex: 1;
+    padding: 2px 8px;
+}
+
+#sidebar .sidebar-nav a i {
+    padding: 10px;
+}
+
+#sidebar .sidebar-nav {
+    margin-bottom: 8px;
+}
+
+#sidebar .sidebar-nav ul {
+    margin: 0;
+    padding: 0;
+}
+
+#sidebar .sidebar-nav li {
+    list-style-type: none;
+    padding: 2px 8px;
+}
 
 /* Style the slide viewer */
 
