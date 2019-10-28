@@ -9,39 +9,11 @@ app.use(express.static(path.join(__dirname, '/public')));
 app.set('view engine', 'pug');
 
 app.use('/slides', require('./controllers/slides.js')(express));
+app.use('/browse', require('./controllers/slide-selector.js')(express));
 
 app.get('/', (req, res) => {
     //res.render('index');
     res.redirect('/browse/view');
-});
-
-app.get('/browse/view', (req, res) => {
-    res.render('slide-selector');
-
-    //let filePath = path.join(appRoot, "/tests");
-    //let filePath = path.join(appRoot, query.path || "");
-});
-
-app.get('/browse/data', (req, res) => {
-    let query = url.parse(req.url,true).query;
-
-    query.path = query.path || path.sep;
-    let filePath = path.join(appRoot, query.path);
-    fs.readdir(filePath, { withFileTypes: true })
-        .then(files => {
-            //console.log(files);
-            files = files
-                .filter(f => { return f.isDirectory() || (f.isFile() && path.extname(f.name) === '.pug') })
-                .map(f => { f.isDirectory = f.isDirectory(); return f });
-            res.json({
-                meta: { sep: path.sep, path: query.path },
-                files: files
-            });
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({ error: true, message: err });
-        });
 });
 
 app.use(function(req, res, next) {

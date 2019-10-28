@@ -1,14 +1,14 @@
-var fs = require('fs').promises;
+const fs = require('fs').promises;
 const url = require('url');
-var path = require('path');
+const path = require('path');
 
-var parse = require('pug-parser');
-var lex = require('pug-lexer');
-var wrap = require('pug-runtime/wrap');
-var generateCode = require('pug-code-gen');
+const parse = require('pug-parser');
+const lex = require('pug-lexer');
+const wrap = require('pug-runtime/wrap');
+const generateCode = require('pug-code-gen');
 
 module.exports = function(express) {
-    var router = express.Router();
+    let router = express.Router();
 
     router.get('/view', (req, res, next) => {
         res.render('slide-viewer');

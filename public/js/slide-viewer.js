@@ -9,6 +9,18 @@ let name,
 
 /** Hook up the listeners **/
 $(document).ready(function() {
+    initSlideControls();
+    initSlideHeader();
+    initSidebar();
+
+    let urlParams = new URLSearchParams(window.location.search);
+    name = decodeURIComponent(urlParams.get('name')) || 0;
+    slideNumber = parseInt(urlParams.get('slide')) || 0;
+
+    loadSlide(slideNumber);
+});
+
+async function initSlideControls() {
     $(document).on('click', '.slide', nextClick);
     $(document).on('click', '#slide-control-prev', prevClick);
     $(document).on('click', '#slide-control-next', nextClick);
@@ -29,13 +41,36 @@ $(document).ready(function() {
                 break;
         }
     });
+}
 
-    let urlParams = new URLSearchParams(window.location.search);
-    name = decodeURIComponent(urlParams.get('name')) || 0;
-    slideNumber = parseInt(urlParams.get('slide')) || 0;
+async function initSlideHeader() {
+    $('#sidebar-menu-button').click(function() {
+        let sidebar = $('#sidebar');
+        let w = sidebar.attr("width-default");
+        //console.log(sidebar.width() + " vs " + w);
+        if (sidebar.width() == 0) {
+            sidebar.show();
+            sidebar.animate({width: w}, "slow");
+        } else {
+            sidebar.attr('width-default', sidebar.width());
+            sidebar.animate({width: 0}, "slow", function() {sidebar.hide();});
+		}
+    });
+}
 
-    loadSlide(slideNumber);
-});
+// this function might take sometime once we implement slide list
+async function initSidebar() { 
+    $('#sidebar a').click(function() {
+        let contents = $(this).siblings('ul');
+        if(contents.css('display') == 'none') {
+            contents.slideDown();
+            $(this).children('i').removeClass('fa-plus').addClass('fa-minus');
+        } else {
+            contents.slideUp();
+            $(this).children('i').removeClass('fa-minus').addClass('fa-plus');
+        }
+    });
+}
 
 /** Load data **/
 async function loadPresentation() {
@@ -202,18 +237,21 @@ window.onresize = function(event) {
 
 /** Slide Geometry Manipulators */
 function updateSlide() {
-    let sidebar = document.querySelector('.sidebar');
-    let slideControls = document.querySelector('.slide-controls');
+    let slideHeader = document.querySelector('#slide-header');
+    let sidebar = document.querySelector('#sidebar');
+    let slideControls = document.querySelector('#slide-controls');
 
     let maxWidth, maxHeight;
     if (document.fullscreenElement) {
         // hide all the unnecessary stuff
+        slideHeader.style.display = 'none';
         sidebar.style.display = 'none';
         slideControls.style.display = 'none';
 
         maxWidth = screen.availWidth,
         maxHeight = screen.availHeight;
     } else {
+        slideHeader.style.display = 'flex';
         sidebar.style.display = 'initial';
         slideControls.style.display = 'initial';
 
