@@ -7,6 +7,11 @@ const lex = require('pug-lexer');
 const wrap = require('pug-runtime/wrap');
 const generateCode = require('pug-code-gen');
 
+const log = {
+    debug: require('debug')('deal:slide-viewer:debug'),
+    error: require('debug')('deal:slide-viewer:error')
+};
+
 module.exports = function(express) {
     let router = express.Router();
 
@@ -21,12 +26,12 @@ module.exports = function(express) {
 
         getPresentation(filePath)
             .then(presentation => {
-                console.log(presentation);
-                res.json(presentation);
+                log.debug("Fetched presentation %s", query.name);
+                res.json({ success: true, message: "Fetched presentation", presentation: presentation });
             })
             .catch(err => {
-                console.log(err);
-                res.status(500).json({ error: true, message: "couldn't retrieve presentation" });
+                log.error("Failed to fetch presentation: %o", err);
+                res.status(400).json({ success: false, message: "Failed to fetch presentation", error: err });
             })
     });
 
@@ -46,35 +51,45 @@ function getPresentation(relFilePath) {
                 let ast = parse(tokens, {filePath, src});
 
                 // Parse the head
-                let head = ast.nodes.find((e) => e.name == 'head');
+                let head = ast.nodes.find(e => e.name == 'head');
+                if (!head) reject({ code: 'ERRNOHEAD', message: 'Presentation head was not specified' });
                 // Record down the mixins listed. We'll need to load this with each slide
-                let mixins = head.block.nodes.find((e) => e.type == 'Mixin');
+                let mixins = head.block.nodes.find(e => e.type == 'Mixin');
                 // Obtain the setting options
-                let settings = head.block.nodes.find((e) => e.name == 'slideSettings').attrs;
-                let aspectRatio = (frac => { 
-                    return parseFloat(frac[0])/parseFloat(frac[1]);
-                })(eval(settings.find((e) => e.name=='aspectRatio').val).split(':'));
-                //let theme = '<link rel="stylesheet" type="text/css" href="/css/' + eval(settings.find((e) => e.name=='theme').val) + '.css">';
-                let theme = eval(settings.find((e) => e.name=='theme').val);
-                let name = eval(settings.find((e) => e.name=='name').val);
+                let settings = (head.block.nodes.find(e => e.name == 'slideSettings') || { attrs: undefined }).attrs;
+                if (settings) {
+                    let name = eval((settings.find(e => e.name=='name') || { val: '"(Unspecified)"' }).val);
+                    let theme = eval((settings.find(e => e.name=='theme') || { val: '"default"' }).val);
+                    let aspectRatio = (frac => { 
+                        return parseFloat(frac[0])/parseFloat(frac[1]);
+                    })(eval((settings.find(e => e.name=='aspectRatio') || { val: '"4:3"' }).val).split(':'));
 
-                presentation.meta = {   // set all the meta information of the presentation
-                    theme: theme,
-                    aspectRatio: aspectRatio,
-                    name: name,
+                    presentation.meta = {   // set all the meta information of the presentation
+                        name: name,
+                        theme: theme,
+                        aspectRatio: aspectRatio,
+                    };
+                } else {
+                    presentation.meta = {
+                        name: '(Unspecified)',
+                        theme: 'default',
+                        aspectRatio: 4.0/3.0
+                    };
                 }
 
                 // Parse the body
                 let body = ast.nodes.find((e) => e.name == 'body').block.nodes;
                 let slides = body.map((slideAst, slideNumber) => {      // loop through all the slide
                     slideAst.block.nodes.unshift(mixins);               // add mixins to this slide ast
-                    //console.log(JSON.stringify(slideAst, null, '  '))
+                    log.debug('Parsing slide %d', slideNumber);
 
                     // Find and parse all animations
                     let parsedAnimationList = null;
                     let animationListBlock = slideAst.block.nodes.find(e => e.name == 'animation-list');
-                    console.log("animationListBlock: " + animationListBlock);
-                    if (animationListBlock === undefined) parsedAnimationList = [];
+                    if (animationListBlock === undefined) {
+                        log.debug("No animations found.");
+                        parsedAnimationList = [];
+                    }
                     else {
                         // Find and remove item from slide content
                         let idx = slideAst.block.nodes.indexOf(animationListBlock);
@@ -103,7 +118,7 @@ function getPresentation(relFilePath) {
 
                             return animationItem;
                         });
-                        console.log("parsedAnimationList: " + parsedAnimationList);
+                        log.debug("Parsed animations.");
                     }
                     
                     // Generate the slide html
@@ -146,7 +161,7 @@ function getPresentation(relFilePath) {
                 resolve(presentation);
             })
             .catch(err => {
-                console.log(err);
+                log.error('Error parsing presentation %s: ', filePath, err);
                 reject(err);
             });
     });

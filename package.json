@@ -5,7 +5,7 @@
     "bin": "index.js",
     "scripts": {
         "start": "node index.js",
-        "test": "nodemon index.js",
+        "test": "DEBUG=deal:* nodemon index.js",
         "build": "pkg . --out-path builds/"
     },
     "dependencies": {

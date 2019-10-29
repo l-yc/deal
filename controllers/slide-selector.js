@@ -2,14 +2,16 @@ const fs = require('fs').promises;
 const path = require('path');
 const url = require('url');
 
+const log = {
+    debug: require('debug')('deal:slide-selector:debug'),
+    error: require('debug')('deal:slide-selector:error')
+};
+
 module.exports = function(express) {
     let router = express.Router();
 
     router.get('/view', (req, res) => {
         res.render('slide-selector');
-
-        //let filePath = path.join(appRoot, "/tests");
-        //let filePath = path.join(appRoot, query.path || "");
     });
 
     router.get('/data', (req, res) => {
@@ -19,7 +21,7 @@ module.exports = function(express) {
         let filePath = path.join(appRoot, query.path);
         fs.readdir(filePath, { withFileTypes: true })
             .then(files => {
-                //console.log(files);
+                log.debug(files);
                 files = files
                     .filter(f => { return f.isDirectory() || (f.isFile() && path.extname(f.name) === '.pug') })
                     .map(f => { f.isDirectory = f.isDirectory(); return f });
@@ -29,7 +31,7 @@ module.exports = function(express) {
                 });
             })
             .catch(err => {
-                console.log(err);
+                log.error(err);
                 res.status(500).json({ error: true, message: err });
             });
     });
