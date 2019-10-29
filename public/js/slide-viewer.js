@@ -79,13 +79,10 @@ async function loadPresentation() {
     let target = window.location.origin + '/slides/data';
     console.log('querying ' + target);
     return new Promise((resolve, reject) => {
-        $.get(target, { name: name }, function(data, status){
-            if (data.error) {
-                reject(data.message);
-                return;
-            } else {
+        $.get(target, { name: name })
+            .done(function(data, status){
                 //console.log("Data: " + JSON.stringify(data) + "\nStatus: " + status);
-                presentation = data;
+                presentation = data.presentation;
                 Object.freeze(presentation);    // we don't want to ever modify the original object
                 numberOfSlides = presentation.slides.length;
                 document.querySelector('#slide-title').innerHTML = presentation.meta.name;
@@ -98,13 +95,23 @@ async function loadPresentation() {
                 document.head.appendChild(link);
 
                 resolve();
-            }
-        });
+            })
+            .fail(function(err) {
+                console.log(err);
+                reject(err);
+            });
     });
 }
 
 async function loadSlide(newSlideNumber) {
-    if (presentation == null) await loadPresentation();
+    if (presentation == null) {
+        try {
+            await loadPresentation();
+        } catch (err) {
+            alert(decodeURIComponent(JSON.stringify(err.responseJSON,null,4)));
+            return;
+        }
+    }
 
     if (newSlideNumber < 0 || newSlideNumber > numberOfSlides)
         return;
