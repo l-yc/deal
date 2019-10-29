@@ -140,6 +140,12 @@ Under the body tag, you can write your slides. Each slides should be nested unde
     .column(style="flex:1")
 ```
 
+To utilise the automatic text scaling feature, you must specify font sizes in the unit `em`, e.g. `1em`. Reasonable ranges are usually in the range ~`1em` to `2em`, but feel free to play around with the value to modify the ratio of font sizes. Below is an example of modifying the font size of a `p` element:
+
+```pug
+p(style="font-size: 1.5em")
+```
+
 In addition, you can also include an `animation-list` tag, which will contain a list of animations.
 
 Each animation item will have the following syntax:

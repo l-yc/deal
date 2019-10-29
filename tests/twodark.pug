@@ -1,0 +1,36 @@
+head
+    slideSettings(name="Two Dark Demo" aspectRatio="4:3" theme="twodark")
+    
+    mixin image(src)
+        img(src=src class=attributes.class)
+
+body
+    p-slide
+
+    p-slide.layout-title
+        h1 Two Dark
+        h3 A dark theme for p-slide
+
+        animation-list
+            li.withPrevious.fadeIn(target="h1")
+            li.afterPrevious.bounceIn(target="h3")
+            li.onClick.bounceOut(target="h3")
+            li.fromPrevious.bounceOut(target="h1" delay="0.5")
+
+    p-slide.layout-content
+        h1 Title
+        ul
+            li Some content
+            li More text
+            li This is a simple
+            li Info heavy slide
+            li That is common
+            li in presentations
+
+        animation-list
+            li.onClick.fadeIn(target="li:nth-child(1)")
+            li.onClick.fadeIn(target="li:nth-child(2)")
+            li.onClick.fadeIn(target="li:nth-child(3)")
+            li.onClick.fadeIn(target="li:nth-child(4)")
+            li.onClick.fadeIn(target="li:nth-child(5)")
+            li.onClick.fadeIn(target="li:nth-child(6)")
