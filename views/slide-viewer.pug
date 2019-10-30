@@ -1,20 +1,20 @@
 head
     link(rel='stylesheet' type='text/css' href='/css/slide-viewer.css')
-    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css")
-    link(href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css", rel="stylesheet", integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN", crossorigin="anonymous")
-    script(src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous")
+    link(rel='stylesheet' type='text/css' href='/animate.css/animate.min.css')
+    link(rel='stylesheet' type='text/css' href='/fontawesome-free/css/all.css')
+    script(src='/jquery/jquery.min.js')
     script(src='/js/slide-viewer.js')
 
     mixin navHeader(title)
         a.row.center
             div: strong #{title}
-            i.fa.fa-minus(aria-hidden="true")
+            i.fas.fa-minus(aria-hidden="true")
 
 
 body.column
     div.row#slide-header
-        a#slide-header-sidebar-button.slide-header-button: i.fa.fa-bars(aria-hidden="true")
-        a#slide-header-home-button.slide-header-button(href="/browse/view"): i.fa.fa-home(aria-hidden="true")
+        a#slide-header-sidebar-button.slide-header-button: i.fas.fa-bars(aria-hidden="true")
+        a#slide-header-home-button.slide-header-button(href="/browse/view"): i.fas.fa-home(aria-hidden="true")
         h1#slide-title
     div.row(style="flex:1")
         div.column#sidebar
@@ -31,9 +31,9 @@ body.column
         div.column(style="flex:1")
             div#slide-controls
                 div.row.center
-                    a#slide-control-prev.slide-control-button: i.fa.fa-chevron-left(aria-hidden="true")
-                    a#slide-control-next.slide-control-button: i.fa.fa-chevron-right(aria-hidden="true")
-                    a#slide-control-fullscreen.slide-control-button: i.fa.fa-arrows-alt(aria-hidden="true")
+                    a#slide-control-prev.slide-control-button: i.fas.fa-chevron-left(aria-hidden="true")
+                    a#slide-control-next.slide-control-button: i.fas.fa-chevron-right(aria-hidden="true")
+                    a#slide-control-fullscreen.slide-control-button: i.fas.fa-expand(aria-hidden="true")
             div.row.center
                 div.ratio-container.slide
             //div.ratio-container.slide(style='--ratio: calc(' + aspectRatio + ')') !{slideBody}
