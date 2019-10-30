@@ -9,7 +9,10 @@
         "build": "pkg . --out-path builds/"
     },
     "dependencies": {
+        "@fortawesome/fontawesome-free": "^5.11.2",
+        "animate.css": "^3.7.2",
         "express": "4.16.4",
+        "jquery": "^3.4.1",
         "jsdom": "^15.2.0",
         "mathjax": "^3.0.0",
         "nodemon": "^1.19.4",

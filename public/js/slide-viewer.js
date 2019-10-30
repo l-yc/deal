@@ -37,7 +37,7 @@ $(document).ready(function() {
             }
         };
         let script = document.createElement('script');
-        script.src = '/js/mathjax/es5/tex-chtml.js';
+        script.src = '/mathjax/es5/tex-chtml.js';
         script.async = true;
         document.head.appendChild(script);
     });
