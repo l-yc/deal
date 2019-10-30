@@ -11,6 +11,7 @@
     "dependencies": {
         "express": "4.16.4",
         "jsdom": "^15.2.0",
+        "mathjax": "^3.0.0",
         "nodemon": "^1.19.4",
         "pug": "2.0.3"
     },
