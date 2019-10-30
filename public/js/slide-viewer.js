@@ -5,10 +5,43 @@ let name,
     totalAnimations,
     numberOfSlides,
     stack,
-    presentation = null;
+    presentation = null,
+    mathJaxLoader;
 
 /** Hook up the listeners **/
 $(document).ready(function() {
+    mathJaxLoader = new Promise((resolve, reject) => {
+        window.MathJax = {
+            chtml: {
+                scale: 1,                      // global scaling factor for all expressions
+                minScale: .5,                  // smallest scaling factor to use
+                matchFontHeight: true,         // true to match ex-height of surrounding font
+                mtextInheritFont: false,       // true to make mtext elements use surrounding font
+                merrorInheritFont: true,       // true to make merror text use surrounding font
+                mathmlSpacing: false,          // true for MathML spacing rules, false for TeX rules
+                skipAttributes: {},            // RFDa and other attributes NOT to copy to the output
+                exFactor: .5,                  // default size of ex in em units
+                displayAlign: 'center',        // default for indentalign when set to 'auto'
+                displayIndent: '0',            // default for indentshift when set to 'auto'
+                //fontURL: '[mathjax]/components/output/chtml/fonts/woff-v2',   // The URL where the fonts are found
+                adaptiveCSS: true              // true means only produce CSS that is used in the processed equations
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                    MathJax.startup.promise.then(() => {
+                        console.log('MathJax initial typesetting complete');
+                        resolve();
+                    });
+                }
+            }
+        };
+        let script = document.createElement('script');
+        script.src = '/js/mathjax/es5/tex-chtml.js';
+        script.async = true;
+        document.head.appendChild(script);
+    });
+
     initSlideControls();
     initSlideHeader();
     initSidebar();
@@ -138,6 +171,15 @@ async function loadSlide(newSlideNumber) {
         document.querySelector('.slide').innerHTML = slideBody;
         document.querySelector('#slide-progress-indicator').innerHTML = `${slideNumber} / ${numberOfSlides}`;
     }
+
+    mathJaxLoader = mathJaxLoader
+        .then(() => {
+            return MathJax.typesetPromise();
+        })
+        .catch(err => {
+            console.log('Typeset failed: ' + err.message);
+        });
+
     updateSlide();
     initAnimations();
 }

@@ -72,11 +72,16 @@ body
             .column(style="flex:1")
                 p Or even themes by creating your own stylesheets
                 p If you are a coder, you can add javascript to your slides too
+        .row
+            p.
+                You can even include math with mathjax:
+                \( \int_a^b f(x) dx = \lim_{\lVert\Delta x\rVert\to 0}{\sum_{i=1}^n f(x_i^*)\Delta x_i} \)
         animation-list
             li.onClick.fadeIn(target=".column:nth-child(1) p:nth-child(1)")
             li.onClick.fadeIn(target=".column:nth-child(1) p:nth-child(2)")
             li.onClick.fadeIn(target=".column:nth-child(2) p:nth-child(1)")
             li.onClick.fadeIn(target=".column:nth-child(2) p:nth-child(2)")
+            li.onClick.fadeIn(target=".row:nth-child(3)")
 
     p-slide
         h1 Insert Title
