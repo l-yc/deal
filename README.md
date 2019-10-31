@@ -1,4 +1,4 @@
-# pug-slides
+# deal
 
 Readable text-based slides based on [pug](https://github.com/pugjs/pug) syntax which handles the formatting for you.
 
@@ -72,6 +72,7 @@ npm test
 To rebuild binaries
 
 ```shell
+./cleanForBuild.sh
 npm run build
 ```
 
