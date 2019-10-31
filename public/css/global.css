@@ -1,9 +1,15 @@
-@import url('https://fonts.googleapis.com/css?family=Titillium+Web');
+/** font definitions **/
 
-html, body {
-    margin: 0px;
-    height: 100%;
+/*@import url('https://fonts.googleapis.com/css?family=Titillium+Web');*/
+@font-face {
+    font-family: 'Titillium Web';
+    src: url('../fonts/titilliumweb-regular-webfont.woff2') format('woff2'),
+         url('../fonts/titilliumweb-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
 }
+
 
 /** Helper classes for layout **/
 .column {
@@ -30,11 +36,16 @@ html, body {
     justify-content: center;
 }
 
-:not(.slide) > * {
+/** Global style classes **/
+html, body {
+    margin: 0;
+    height: 100%;
+}
+
+:not(.slide) {
     font-family: 'Titillium Web', sans-serif;
 }
 
-/** Global style classes **/
 a.button-link {
     padding: 10px;
     text-decoration: none;
