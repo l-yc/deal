@@ -26,7 +26,6 @@ body.column
             div.sidebar-nav
                 +navHeader("Slide List")
                 ul#slide-list
-                    li Under Construction
 
         div.column(style="flex:1")
             div#slide-controls
@@ -35,7 +34,14 @@ body.column
                     a#slide-control-next.slide-control-button: i.fas.fa-chevron-right(aria-hidden="true")
                     a#slide-control-fullscreen.slide-control-button: i.fas.fa-expand(aria-hidden="true")
             div.row.center
-                div.ratio-container.slide
+                div(style='position: relative')
+                    div.ratio-container.slide
+                    div#fullscreen-slide-controls
+                        a#fullscreen-slide-control-prev.fullscreen-slide-control-button: i.fas.fa-chevron-left(aria-hidden="true")
+                        a#fullscreen-slide-control-list.fullscreen-slide-control-button #[span#text] #[i.fas.fa-caret-down(aria-hidden="true")]
+                        ul#fullscreen-slide-list
+                        a#fullscreen-slide-control-next.fullscreen-slide-control-button: i.fas.fa-chevron-right(aria-hidden="true")
+                        a#fullscreen-slide-control-fullscreen.fullscreen-slide-control-button: i.fas.fa-expand(aria-hidden="true")
             //div.ratio-container.slide(style='--ratio: calc(' + aspectRatio + ')') !{slideBody}
 
 //- https://github.com/IanLunn/Hover
