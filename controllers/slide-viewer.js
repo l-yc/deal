@@ -122,6 +122,7 @@ function getPresentation(relFilePath) {
                     }
                     
                     // Generate the slide html
+                    log.debug("Generating slide html...");
                     var funcStr = generateCode(slideAst, {
                         compileDebug: false,
                         pretty: true,
@@ -130,9 +131,12 @@ function getPresentation(relFilePath) {
                     });
                     var func = wrap(funcStr, 'helloWorld');
                     slideBodyHtml = func();
+                    log.debug("Generated slide html");
                     
                     // Hide all the entrance animated elements
+                    log.debug("Checking for animations...");
                     if (parsedAnimationList && parsedAnimationList.length > 0) {
+                        log.debug("Found animations, processing...");
                         const jsdom = require("jsdom");
                         const { JSDOM } = jsdom;
                         let dom = new JSDOM(slideBodyHtml);
@@ -147,6 +151,7 @@ function getPresentation(relFilePath) {
                         }
                         slideBodyHtml = div.innerHTML;   // replace with the updated html
                     }
+                    log.debug("Done");
 
                     let slide = {
                         slideBody: slideBodyHtml,
@@ -155,9 +160,11 @@ function getPresentation(relFilePath) {
                     };
                     return slide;
                 });
+                log.debug("Parsed all slides");
 
                 // Return the slideBody object
                 presentation.slides = slides;
+                log.debug("Saved all slides");
                 resolve(presentation);
             })
             .catch(err => {
