@@ -39,7 +39,6 @@
 /** Global style classes **/
 html, body {
     margin: 0;
-    height: 100%;
 }
 
 :not(.slide) {

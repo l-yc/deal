@@ -1,5 +1,9 @@
 @import "global.css";
 
+body {
+    height: 100%;
+}
+
 /* Style the slide header */
 #slide-header {
     background-color: white;

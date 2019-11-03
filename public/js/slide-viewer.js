@@ -41,8 +41,8 @@ async function initMathJax() {
                 adaptiveCSS: true              // true means only produce CSS that is used in the processed equations
             },
             options: {
-                renderActions: {
-                    addMenu: [0, '', '']
+                renderActions: {               
+                    addMenu: [0, '', '']       // hide the menu
                 }
             },
             startup: {

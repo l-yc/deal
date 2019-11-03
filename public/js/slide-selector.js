@@ -25,13 +25,15 @@ $(document).ready(function() {
     window.onpopstate = function(event) {
         console.log("location: " + document.location + ", state: " + JSON.stringify(event.state));
         let urlParams = new URLSearchParams(window.location.search);
-        let targetPath = ('path' in urlParams ? decodeURIComponent(urlParams.get('path')) : '');
+        let targetPath = (urlParams.has('path') ? decodeURIComponent(urlParams.get('path')) : '');
 
         loadDirectory(targetPath)
     };
 
     let urlParams = new URLSearchParams(window.location.search);
-    let targetPath = ('path' in urlParams ? decodeURIComponent(urlParams.get('path')) : '');
+    console.log(window.location.search);
+    console.log(urlParams.get('path'));
+    let targetPath = (urlParams.has('path') ? decodeURIComponent(urlParams.get('path')) : '');
 
     loadDirectory(targetPath)
 });
@@ -72,7 +74,6 @@ async function populateDirectoryViewer(data) {
     let directoryPath = document.querySelector('#directoryPath');
     let directoryListing = document.querySelector('#directoryListing');
 
-
     if (currentPath == '')
         window.history.replaceState({path: currentPath}, 'navigate', "?path=" + encodeURIComponent(data.meta.path));
     else
@@ -84,20 +85,16 @@ async function populateDirectoryViewer(data) {
         directoryListing.removeChild(directoryListing.firstChild);
     }
 
-    if (currentPath !== data.meta.sep) {   // ..
-        let li = document.createElement('li');
-        let a = document.createElement('a');
-        a.onclick = event => loadDirectory(currentPath.split(data.meta.sep).slice(0,-2).join(data.meta.sep) + data.meta.sep);
-        a.innerText = '..';
-        li.appendChild(a);
-        directoryListing.appendChild(li);
-    }
+    data.files.unshift({
+        name: '..',
+        isDirectory: true
+    });
 
     data.files.forEach(item => {
         let li = document.createElement('li');
         let a = document.createElement('a');
         if (item.isDirectory)
-            a.onclick = event => loadDirectory(currentPath + item.name + data.meta.sep);
+            a.onclick = event => loadDirectory(currentPath + data.meta.sep + item.name);
         else
             a.onclick = event => loadFile(currentPath + item.name);
         a.innerText = item.name;
