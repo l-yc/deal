@@ -38,9 +38,7 @@ module.exports = function(express) {
     return router;
 };
 
-function getPresentation(relFilePath) {
-    let filePath = path.join(appRoot, relFilePath);
-
+function getPresentation(filePath) {
     return new Promise((resolve, reject) => {
         fs.readFile(filePath, {encoding: 'utf-8'})
             .then(src => {
