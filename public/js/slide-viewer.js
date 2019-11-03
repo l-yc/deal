@@ -40,6 +40,11 @@ async function initMathJax() {
                 //fontURL: '[mathjax]/components/output/chtml/fonts/woff-v2',   // The URL where the fonts are found
                 adaptiveCSS: true              // true means only produce CSS that is used in the processed equations
             },
+            options: {
+                renderActions: {
+                    addMenu: [0, '', '']
+                }
+            },
             startup: {
                 ready: () => {
                     MathJax.startup.defaultReady();
@@ -220,10 +225,26 @@ async function loadSlide(newSlideNumber) {
         slideNumber = parseInt(slide.slideNumber);
         animationList = slide.animationList;
         totalAnimations = animationList.length;
+        
+        // Hide all the entrance animated elements
+        console.log("Checking for animations...");
+        if (animationList && animationList.length > 0) {
+            console.log("Found animations, processing...");
+            let div = document.createElement('div');
+            div.classList.add('slide');
+            div.innerHTML = slideBody;
+            console.log(div);
+            animationList.forEach(item => {
+                let target = div.querySelector(item.target);
+                console.log(JSON.stringify(item) + ' -> ' + target);
+                if (item.type == 'ENTRANCE' && target) target.classList.add('hidden');
+            });
+            slideBody = div.innerHTML;   // replace with the updated html
+        }
+        console.log("Done");
     }
     document.querySelector('.slide').innerHTML = slideBody;
     document.querySelector('#slide-progress-indicator').innerText = `${slideNumber} / ${numberOfSlides}`;
-    console.log(document.querySelector('#fullscreen-slide-control-list').childNodes);
     document.querySelector('#fullscreen-slide-control-list').childNodes[0].innerText = `Slide ${slideNumber} / ${numberOfSlides}`;
 
     mathJaxLoader = mathJaxLoader

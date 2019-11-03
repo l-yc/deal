@@ -1,11 +1,12 @@
 {
-    "name": "pug-slides",
+    "name": "deal",
     "version": "1.0.0",
     "main": "index.js",
     "bin": "index.js",
     "scripts": {
         "start": "node index.js",
         "test": "DEBUG=deal:* nodemon index.js",
+        "clean": "modclean && ./cleanForBuild.sh || true",
         "build": "pkg . --out-path builds/"
     },
     "dependencies": {
@@ -13,9 +14,7 @@
         "animate.css": "^3.7.2",
         "express": "4.16.4",
         "jquery": "^3.4.1",
-        "jsdom": "^15.2.0",
         "mathjax": "^3.0.0",
-        "nodemon": "^1.19.4",
         "pug": "2.0.3"
     },
     "pkg": {

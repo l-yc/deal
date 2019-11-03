@@ -72,8 +72,14 @@ npm test
 To rebuild binaries
 
 ```shell
-./cleanForBuild.sh
+rm -r node_modules && npm install --only=production     # optional, slow and only removes ~1 MB of dependencies
+npm run clean
 npm run build
+```
+
+Note: a rough estimate of the size of the binary is given by the size of `node_modules` + 13.4 MB (node). To analyse the size of `node_modules`:
+```bash
+du ./node_modules --max-depth=1 -h | sort -h
 ```
 
 ## Usage
