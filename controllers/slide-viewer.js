@@ -133,26 +133,6 @@ function getPresentation(relFilePath) {
                     slideBodyHtml = func();
                     log.debug("Generated slide html");
                     
-                    // Hide all the entrance animated elements
-                    log.debug("Checking for animations...");
-                    if (parsedAnimationList && parsedAnimationList.length > 0) {
-                        log.debug("Found animations, processing...");
-                        const jsdom = require("jsdom");
-                        const { JSDOM } = jsdom;
-                        let dom = new JSDOM(slideBodyHtml);
-                        let doc = dom.window.document;
-                        let div = doc.createElement('div');
-                        div.classList.add('slide');
-                        div.innerHTML = slideBodyHtml;
-                        for (let i = 0; i < parsedAnimationList.length; ++i) {
-                            let item = parsedAnimationList[i];
-                            let target = div.querySelector(item.target);
-                            if (item.type == 'ENTRANCE' && target) target.classList.add('hidden');
-                        }
-                        slideBodyHtml = div.innerHTML;   // replace with the updated html
-                    }
-                    log.debug("Done");
-
                     let slide = {
                         slideBody: slideBodyHtml,
                         slideNumber: slideNumber,
