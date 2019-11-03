@@ -96,7 +96,7 @@ async function populateDirectoryViewer(data) {
         if (item.isDirectory)
             a.onclick = event => loadDirectory(currentPath + data.meta.sep + item.name);
         else
-            a.onclick = event => loadFile(currentPath + item.name);
+            a.onclick = event => loadFile(currentPath + data.meta.sep + item.name);
         a.innerText = item.name;
         li.appendChild(a);
         directoryListing.appendChild(li);
