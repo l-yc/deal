@@ -12,6 +12,7 @@ const log = {
 
 global.appRoot = process.cwd();
 app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.static('/'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 

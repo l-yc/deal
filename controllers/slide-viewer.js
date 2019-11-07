@@ -76,8 +76,9 @@ function getPresentation(filePath) {
                 }
 
                 // Parse the body
-                let body = ast.nodes.find((e) => e.name == 'body').block.nodes;
-                let slides = body.map((slideAst, slideNumber) => {      // loop through all the slide
+                let body = ast.nodes.find((e) => e.name == 'body');
+                body = resolvePaths(body, filePath);
+                let slides = body.block.nodes.map((slideAst, slideNumber) => {      // loop through all the slide
                     if (mixins != undefined) slideAst.block.nodes.unshift(mixins);               // add mixins to this slide ast
                     log.debug('Parsing slide %d', slideNumber);
 
@@ -151,3 +152,26 @@ function getPresentation(filePath) {
             });
     });
 }
+
+// parse the AST
+function resolvePaths(node, srcFilePath) {
+    if (node === undefined) return undefined;
+    log.debug(node);
+    if (node.type === 'Tag') {
+        node.block.nodes = node.block.nodes.map(child => {
+            return resolvePaths(child, srcFilePath);
+        });
+    }
+
+    if (node.name === 'img') {
+        let idx = node.attrs.findIndex(a => { return a.name === 'src' });
+        log.debug(idx);
+        if (idx == -1); // TODO: throw an exception
+        let tmp = node.attrs[idx].val;
+        node.attrs[idx].val = '"' + path.join(path.dirname(srcFilePath), eval(node.attrs[idx].val)) + '"';
+        log.debug(tmp + ' -> ' + node.attrs[idx].val);
+    }
+
+    return node;
+}
+
