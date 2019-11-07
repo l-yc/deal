@@ -185,6 +185,23 @@ async function loadPresentation() {
                     li2.innerText = 'Slide ' + slide.slideNumber + ': ' + slideTitle;
                     li2.onclick = e => { loadSlide(slide.slideNumber); };
                     fullscreenSlideListNode.appendChild(li2);
+
+                    // Hide all the entrance animated elements
+                    console.log("Checking for animations...");
+                    if (slide.animationList && slide.animationList.length > 0) {
+                        console.log("Found animations, processing...");
+                        let div = document.createElement('div');
+                        div.classList.add('slide');
+                        div.innerHTML = slide.slideBody;
+                        console.log(div);
+                        slide.animationList.forEach(item => {
+                            let target = div.querySelector(item.target);
+                            console.log(JSON.stringify(item) + ' -> ' + target);
+                            if (item.type == 'ENTRANCE' && target) target.classList.add('hidden');
+                        });
+                        slide.slideBody = div.innerHTML;   // replace with the updated html
+                    }
+                    console.log("Done");
                 });
                 //fullscreenSlideList.appendChildren(slideListNodeClone.childNodes);
 
@@ -225,23 +242,6 @@ async function loadSlide(newSlideNumber) {
         slideNumber = parseInt(slide.slideNumber);
         animationList = slide.animationList;
         totalAnimations = animationList.length;
-        
-        // Hide all the entrance animated elements
-        console.log("Checking for animations...");
-        if (animationList && animationList.length > 0) {
-            console.log("Found animations, processing...");
-            let div = document.createElement('div');
-            div.classList.add('slide');
-            div.innerHTML = slideBody;
-            console.log(div);
-            animationList.forEach(item => {
-                let target = div.querySelector(item.target);
-                console.log(JSON.stringify(item) + ' -> ' + target);
-                if (item.type == 'ENTRANCE' && target) target.classList.add('hidden');
-            });
-            slideBody = div.innerHTML;   // replace with the updated html
-        }
-        console.log("Done");
     }
     document.querySelector('.slide').innerHTML = slideBody;
     document.querySelector('#slide-progress-indicator').innerText = `${slideNumber} / ${numberOfSlides}`;

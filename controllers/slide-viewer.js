@@ -54,7 +54,7 @@ function getPresentation(filePath) {
                 // Record down the mixins listed. We'll need to load this with each slide
                 let mixins = head.block.nodes.find(e => e.type == 'Mixin');
                 // Obtain the setting options
-                let settings = (head.block.nodes.find(e => e.name == 'slideSettings') || { attrs: undefined }).attrs;
+                let settings = (head.block.nodes.find(e => e.name == 'slide-settings') || { attrs: undefined }).attrs;
                 if (settings) {
                     let name = eval((settings.find(e => e.name=='name') || { val: '"(Unspecified)"' }).val);
                     let theme = eval((settings.find(e => e.name=='theme') || { val: '"default"' }).val);
@@ -78,7 +78,7 @@ function getPresentation(filePath) {
                 // Parse the body
                 let body = ast.nodes.find((e) => e.name == 'body').block.nodes;
                 let slides = body.map((slideAst, slideNumber) => {      // loop through all the slide
-                    slideAst.block.nodes.unshift(mixins);               // add mixins to this slide ast
+                    if (mixins != undefined) slideAst.block.nodes.unshift(mixins);               // add mixins to this slide ast
                     log.debug('Parsing slide %d', slideNumber);
 
                     // Find and parse all animations
