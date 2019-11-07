@@ -11,13 +11,13 @@
 }
 
 .slide ul {
-    font-size: 1.5em;
     padding: 0;
 }
 
-.slide li {
+.slide ul li {
     list-style-type: none;
     padding-left: 16px;
+    margin-left: 8px;
 
     box-shadow: -12px 0px 0px -8px white;
 }
@@ -45,6 +45,12 @@
 .slide th, td {
     background-color: white;
     padding: 10px;
+}
+
+.slide img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
 }
 
 /* Create slide layouts here */

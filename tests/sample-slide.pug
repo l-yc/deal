@@ -7,7 +7,7 @@ head
 body
     p-slide
 
-    p-slide.title
+    p-slide.layout-title
         h1#yay Welcome to Deal
         h3 A beautiful slide renderer written in Pug/CSS/JS
 
@@ -101,5 +101,9 @@ body
 
     p-slide
         h1 Images
-        hr
-        img(src="./birb.jpg")
+        p Here's a picture of a bird.
+        figure(style='height: 20em')
+            img(src="./birb.jpg")
+            figcaption Yes, it's a bird
+
+
