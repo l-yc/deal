@@ -1,5 +1,5 @@
 head
-    slideSettings(name="sample-slide" aspectRatio="4:3" theme="default")
+    slide-settings(name="sample-slide" aspectRatio="4:3" theme="default")
     
     mixin image(src)
         img(src=src class=attributes.class)
@@ -8,7 +8,7 @@ body
     p-slide
 
     p-slide.title
-        h1#yay Welcome to p-slide
+        h1#yay Welcome to Deal
         h3 A beautiful slide renderer written in Pug/CSS/JS
 
         //+image("https://i.pinimg.com/736x/d5/24/29/d5242946cedd55c50c7e3b6058d0e9b9.jpg").animated.fadeIn
@@ -21,14 +21,14 @@ body
     p-slide
         h1 What's so cool about this?
         ul
-            li PugSlides created are clear, readable and elegant
+            li Deal decks created are clear, readable and elegant
             li It's fast to use, yet not compromising on its power
             li Here's a peek of what this slide looks like in code
         pre
             code
                 | h1 What's so cool about this?
                 | ul
-                |    li PugSlides created are clear, readable and elegant
+                |    li Deal decks created are clear, readable and elegant
                 |    li It's fast to use, yet not compromising on its power
                 |    li Here's a peek of what this slide looks like in code
                 | // code to display this
@@ -50,7 +50,7 @@ body
             code
                 | h1 What's so cool about this?
                 | ul
-                |    li PugSlides created are clear, readable and elegant
+                |    li Deal decks created are clear, readable and elegant
                 |    li It's fast to use, yet not compromising on its power
                 |    li Here's a peek of what this slide looks like in code
                 | // code to display this
@@ -64,7 +64,7 @@ body
             li.bounceIn(target="pre")
 
     p-slide
-        h1 How to use PugSlides?
+        h1 How to use Deal?
         .row
             .column(style="flex:1")
                 p With p-slide, you can code slides in #[a(href="https://pugjs.org/api/getting-started.html") pug]
@@ -98,3 +98,8 @@ body
                 td 2
                 td 3
         p You can include tables too!
+
+    p-slide
+        h1 Images
+        hr
+        img(src="./birb.jpg")

@@ -101,7 +101,7 @@ To create a new presentation, create a new `.pug` file in `tests/`. An minimal e
 
 ```pug
 head
-    slideSettings(name="sample-slide" aspectRatio="4:3" theme="default")
+    slide-settings(name="sample-slide" aspectRatio="4:3" theme="default")
 
 body
     p-slide.title
