@@ -187,21 +187,21 @@ async function loadPresentation() {
                     fullscreenSlideListNode.appendChild(li2);
 
                     // Hide all the entrance animated elements
-                    console.log("Checking for animations...");
+                    //console.log("Checking for animations...");
                     if (slide.animationList && slide.animationList.length > 0) {
-                        console.log("Found animations, processing...");
+                        //console.log("Found animations, processing...");
                         let div = document.createElement('div');
                         div.classList.add('slide');
                         div.innerHTML = slide.slideBody;
-                        console.log(div);
+                        //console.log(div);
                         slide.animationList.forEach(item => {
                             let target = div.querySelector(item.target);
-                            console.log(JSON.stringify(item) + ' -> ' + target);
+                            //console.log(JSON.stringify(item) + ' -> ' + target);
                             if (item.type == 'ENTRANCE' && target) target.classList.add('hidden');
                         });
                         slide.slideBody = div.innerHTML;   // replace with the updated html
                     }
-                    console.log("Done");
+                    //console.log("Done");
                 });
                 //fullscreenSlideList.appendChildren(slideListNodeClone.childNodes);
 
@@ -412,12 +412,15 @@ function resizeSlide(maxWidth, maxHeight) {
 }
 
 function scaleSlideText() {
-    let slide = document.querySelector('.slide');
-    let width = parseInt(slide.style.width),
-        height = parseInt(slide.style.height);
+    let slide = document.querySelector('.slide p-slide');
+    let style = window.getComputedStyle(slide, null);
+    console.log(style);
+    let paddingVert = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+    let width = parseFloat(style.width),
+        height = parseFloat(style.height) - paddingVert;
 
     // we'll only need to fit height, since width is wrapped
-    let lo = 0, hi = parseInt(height);
+    let lo = 0, hi = height;
     //console.log('seed: ' + lo + ' - ' + hi);
     while (hi - lo > 1) {
         let mid = (lo + hi)/2;

@@ -10,10 +10,9 @@
 }
 
 .slide p {
-    font-size: 24;
+    font-size: 1em;
 }
 
-/*a:not(.button-link) {*/
 .slide a {
     text-decoration: none;
     color: inherit;
@@ -33,6 +32,12 @@
 .slide th, td {
     background-color: white;
     padding: 10px;
+}
+
+.slide img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
 }
 
 /* Create slide layouts here */
