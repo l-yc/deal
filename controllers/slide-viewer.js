@@ -74,6 +74,22 @@ function getPresentation(filePath) {
                         aspectRatio: 4.0/3.0
                     };
                 }
+                // Parse any other global options:
+                // #1: Global slide transitions
+                let globalSlideTransition = (head.block.nodes.find(e => e.name == 'slide-transitions') || { attrs: undefined }).attrs;
+                if (globalSlideTransition) {
+                    let entrance = eval((globalSlideTransition.find(e => e.name=='entrance') || { val: undefined }).val);
+                    let exit = eval((globalSlideTransition.find(e => e.name=='exit') || { val: undefined }).val);
+                    let durationEach = eval((globalSlideTransition.find(e => e.name=='durationEach') || { val: undefined }).val);
+                    if (entrance && exit && durationEach) {
+                        globalSlideTransition = {
+                            entrance: entrance,
+                            exit: exit,
+                            durationEach: durationEach
+                        };
+                    } else globalSlideTransition = undefined;
+                }
+                log.debug(globalSlideTransition)
 
                 // Parse the body
                 let body = ast.nodes.find((e) => e.name == 'body');
@@ -81,6 +97,24 @@ function getPresentation(filePath) {
                 let slides = body.block.nodes.map((slideAst, slideNumber) => {      // loop through all the slide
                     if (mixins != undefined) slideAst.block.nodes.unshift(mixins);               // add mixins to this slide ast
                     log.debug('Parsing slide %d', slideNumber);
+
+                    // Parse specific slide options
+                    let slideTransition = slideAst.attrs;
+                    if (slideTransition) {  // override global
+                        let entrance = eval((slideTransition.find(e => e.name=='entrance') || { val: undefined }).val);
+                        let exit = eval((slideTransition.find(e => e.name=='exit') || { val: undefined }).val);
+                        let durationEach = eval((slideTransition.find(e => e.name=='durationEach') || { val: undefined }).val);
+                        if (entrance && exit && durationEach) {
+                            slideTransition = {
+                                entrance: entrance,
+                                exit: exit,
+                                durationEach: durationEach
+                            };
+                        } else slideTransition = globalSlideTransition;
+                    } else {
+                        slideTransition = globalSlideTransition;    // fallback
+                    }
+                    log.debug(slideTransition);
 
                     // Find and parse all animations
                     let parsedAnimationList = null;
@@ -99,7 +133,14 @@ function getPresentation(filePath) {
                         const triggers = ["onClick", "withPrevious", "afterPrevious", "fromPrevious"];
 
                         parsedAnimationList = animationList.map(item => {
-                            let animationItem = { trigger: "onClick", type: undefined, target: undefined }
+                            let animationItem = {
+                                name: undefined,
+                                type: undefined,
+                                target: undefined,
+                                trigger: "onClick",
+                                delay: "0s",
+                                duration: "1s"
+                            }
 
                             item.attrs.forEach(attr => {    // parse the attributes
                                 attr.val = eval(attr.val);
@@ -107,12 +148,14 @@ function getPresentation(filePath) {
                                     animationItem.target = '.slide ' + attr.val;
                                 else if (triggers.includes(attr.val))
                                     animationItem.trigger = attr.val;
+                                else if (attr.name == "delay")
+                                    animationItem.delay = attr.val; // must be a fromPrevious attribute
+                                else if (attr.name == "duration")
+                                    animationItem.duration = attr.val;
                                 else if (attr.name == "class") {
                                     animationItem.name = attr.val;
                                     animationItem.type = animationItem.name.includes('In') ? 'ENTRANCE' : (animationItem.name.includes('Out') ? 'EXIT' : 'EFFECT');
                                 }
-                                else if (attr.name == "delay")
-                                    animationItem.delay = attr.val; // must be a fromPrevious attribute
                             });
 
                             return animationItem;
@@ -135,6 +178,7 @@ function getPresentation(filePath) {
                     let slide = {
                         slideBody: slideBodyHtml,
                         slideNumber: slideNumber,
+                        slideTransition: slideTransition,
                         animationList: parsedAnimationList
                     };
                     return slide;
@@ -156,7 +200,7 @@ function getPresentation(filePath) {
 // parse the AST
 function resolvePaths(node, srcFilePath) {
     if (node === undefined) return undefined;
-    log.debug(node);
+    //log.debug(node);
     if (node.type === 'Tag') {
         node.block.nodes = node.block.nodes.map(child => {
             return resolvePaths(child, srcFilePath);
