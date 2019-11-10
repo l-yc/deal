@@ -3,6 +3,7 @@
     font-family: 'Titillium Web', sans-serif;
     padding: 20px;
     background-color: white;
+    overflow-wrap: break-word;
 }
 
 .slide h1 {
@@ -41,7 +42,7 @@
 }
 
 /* Create slide layouts here */
-.slide .title {
+.slide .layout-title {
     display: flex;
     justify-content: center;
     flex-direction: column;

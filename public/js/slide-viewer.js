@@ -243,20 +243,37 @@ async function loadSlide(newSlideNumber) {
         animationList = slide.animationList;
         totalAnimations = animationList.length;
     }
-    document.querySelector('.slide').innerHTML = slideBody;
-    document.querySelector('#slide-progress-indicator').innerText = `${slideNumber} / ${numberOfSlides}`;
-    document.querySelector('#fullscreen-slide-control-list').childNodes[0].innerText = `Slide ${slideNumber} / ${numberOfSlides}`;
 
-    mathJaxLoader = mathJaxLoader
-        .then(() => {
-            return MathJax.typesetPromise();
-        })
-        .catch(err => {
-            console.log('Typeset failed: ' + err.message);
+    let slideNode = document.querySelector('.slide');
+    animate({
+        name: 'fadeOutLeftBig',
+        target: '.slide',
+        trigger: 'afterPrevious',
+        type: 'EXIT'
+    }).then(() => {
+        slideNode.innerHTML = slideBody;
+
+        mathJaxLoader = mathJaxLoader
+            .then(() => {
+                return MathJax.typesetPromise();
+            })
+            .catch(err => {
+                console.log('Typeset failed: ' + err.message);
+            });
+
+        updateSlide();
+        initAnimations();
+
+        return animate({
+            name: 'fadeInRight',
+            target: '.slide',
+            trigger: 'afterPrevious',
+            type: 'ENTRANCE'
         });
-
-    updateSlide();
-    initAnimations();
+    }).then(() => {
+        document.querySelector('#slide-progress-indicator').innerText = `${slideNumber} / ${numberOfSlides}`;
+        document.querySelector('#fullscreen-slide-control-list').childNodes[0].innerText = `Slide ${slideNumber} / ${numberOfSlides}`;
+    });
 }
 
 /** Slide Playback Controls **/
@@ -412,12 +429,9 @@ function resizeSlide(maxWidth, maxHeight) {
 }
 
 function scaleSlideText() {
-    let slide = document.querySelector('.slide p-slide');
-    let style = window.getComputedStyle(slide, null);
-    console.log(style);
-    let paddingVert = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
-    let width = parseFloat(style.width),
-        height = parseFloat(style.height) - paddingVert;
+    let slide = document.querySelector('.slide');
+    let width = parseFloat(slide.style.width);
+        height = parseFloat(slide.style.height);
 
     // we'll only need to fit height, since width is wrapped
     let lo = 0, hi = height;
@@ -430,12 +444,12 @@ function scaleSlideText() {
         if (contentHeight <= height) lo = mid;
         else hi = mid;
 
-        //console.log(`lo ${lo} hi ${hi} :: mid ${mid} cur: ${contentHeight} vs tgt: ${height}`);
+        console.log(`lo ${lo} hi ${hi} :: mid ${mid} cur: ${contentHeight} vs tgt: ${height}`);
     }
     let scaledEm = lo;
 
-    // sanity check, make sure the unit isn't greater than 1/25 of the slide
-    let maxEm = (height/25.0) / 1.17;
+    // sanity check, make sure the unit isn't greater than 1/20 of the slide
+    let maxEm = height / 20.0;
     //console.log('max ' + maxEm);
     scaledEm = Math.min(scaledEm, maxEm);
 
