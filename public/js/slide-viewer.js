@@ -1,6 +1,7 @@
 let name,
     slideNumber,
     slide,
+    slideTransition,
     animationList,
     totalAnimations,
     numberOfSlides,
@@ -234,46 +235,56 @@ async function loadSlide(newSlideNumber) {
         slide = null;
         slideBody  = '<p-slide><h1> End of Presentation </h1></p-slide>';
         slideNumber = numberOfSlides;
+        slideTransition = null;
         animationList = [];
         totalAnimations = 0;
     } else {
         slide = JSON.parse(JSON.stringify(presentation.slides[newSlideNumber]));    // deep copy for manipulation
         slideBody = decodeURIComponent(slide.slideBody);
         slideNumber = parseInt(slide.slideNumber);
+        slideTransition = slide.slideTransition;
         animationList = slide.animationList;
         totalAnimations = animationList.length;
     }
 
     let slideNode = document.querySelector('.slide');
-    animate({
-        name: 'fadeOutLeftBig',
-        target: '.slide',
-        trigger: 'afterPrevious',
-        type: 'EXIT'
-    }).then(() => {
-        slideNode.innerHTML = slideBody;
-
-        mathJaxLoader = mathJaxLoader
+    console.log(slideTransition);
+    Promise.resolve()
             .then(() => {
-                return MathJax.typesetPromise();
-            })
-            .catch(err => {
-                console.log('Typeset failed: ' + err.message);
+                if (slideTransition) return animate({
+                    name: slideTransition.exit,
+                    type: 'EXIT',
+                    target: '.slide',
+                    trigger: 'afterPrevious',
+                    duration: slideTransition.durationEach
+                });
+                else return Promise.resolve();
+            }).then(() => {
+                slideNode.innerHTML = slideBody;
+
+                mathJaxLoader = mathJaxLoader
+                    .then(() => {
+                        return MathJax.typesetPromise();
+                    })
+                    .catch(err => {
+                        console.log('Typeset failed: ' + err.message);
+                    });
+
+                updateSlide();
+                initAnimations();
+
+                if (slideTransition) return animate({
+                    name: slideTransition.entrance,
+                    type: 'ENTRANCE',
+                    target: '.slide',
+                    trigger: 'afterPrevious',
+                    duration: slideTransition.durationEach
+                });
+                else return Promise.resolve();
+            }).then(() => {
+                document.querySelector('#slide-progress-indicator').innerText = `${slideNumber} / ${numberOfSlides}`;
+                document.querySelector('#fullscreen-slide-control-list').childNodes[0].innerText = `Slide ${slideNumber} / ${numberOfSlides}`;
             });
-
-        updateSlide();
-        initAnimations();
-
-        return animate({
-            name: 'fadeInRight',
-            target: '.slide',
-            trigger: 'afterPrevious',
-            type: 'ENTRANCE'
-        });
-    }).then(() => {
-        document.querySelector('#slide-progress-indicator').innerText = `${slideNumber} / ${numberOfSlides}`;
-        document.querySelector('#fullscreen-slide-control-list').childNodes[0].innerText = `Slide ${slideNumber} / ${numberOfSlides}`;
-    });
 }
 
 /** Slide Playback Controls **/
@@ -287,16 +298,19 @@ function unanimate(item) {
 function animate(item) {
     const node = document.querySelector(item.target);
 
+    node.style['animation-duration'] = item.duration;
     if (item.type == 'ENTRANCE') node.classList.remove('hidden');
     if (item.trigger == 'fromPrevious') {
-        setTimeout(function() {
-            node.classList.add('animated', item.name);
-        }, item.delay * 1000);
+        node.style['animation-delay'] = item.delay;
+        node.classList.add('animated', item.name);
     } else node.classList.add('animated', item.name);
 
     return new Promise((resolve, reject) => {
         function handleAnimationEnd() {
             if (item.type == 'EXIT') node.classList.add('hidden');
+
+            node.style.removeProperty('animation-duration');
+            node.style.removeProperty('animation-delay');
 
             node.classList.remove('animated', item.name)
             node.removeEventListener('animationend', handleAnimationEnd)
@@ -444,12 +458,12 @@ function scaleSlideText() {
         if (contentHeight <= height) lo = mid;
         else hi = mid;
 
-        console.log(`lo ${lo} hi ${hi} :: mid ${mid} cur: ${contentHeight} vs tgt: ${height}`);
+        //console.log(`lo ${lo} hi ${hi} :: mid ${mid} cur: ${contentHeight} vs tgt: ${height}`);
     }
     let scaledEm = lo;
 
-    // sanity check, make sure the unit isn't greater than 1/20 of the slide
-    let maxEm = height / 20.0;
+    // sanity check, make sure the unit isn't greater than 1/25 of the slide
+    let maxEm = height / 25.0;
     //console.log('max ' + maxEm);
     scaledEm = Math.min(scaledEm, maxEm);
 

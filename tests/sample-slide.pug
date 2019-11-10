@@ -1,5 +1,11 @@
 head
     slide-settings(name="sample-slide" aspectRatio="4:3" theme="default")
+
+    slide-transitions(
+        exit="fadeOutLeft"
+        entrance="fadeInRight"
+        durationEach="0.5s"
+    )
     
     mixin image(src)
         img(src=src class=attributes.class)
@@ -7,7 +13,7 @@ head
 body
     p-slide
 
-    p-slide.layout-title
+    p-slide.layout-title(exit="zoomOutUp" entrance="zoomInDown" durationEach="0.5s")
         h1#yay Welcome to Deal
         h3 A beautiful slide renderer written in Pug/CSS/JS
 
@@ -89,8 +95,10 @@ body
         p This is what a simple slide can look like
 
         animation-list
-            li.onClick.fadeInLeft(target='p:nth-of-type(1)')
-            li.onClick.fadeInLeft(target='p:nth-of-type(2)')
+            li.onClick.fadeInLeft(target='p:nth-of-type(1)' duration='0.5s')
+            li.fromPrevious.fadeInLeft(target='p:nth-of-type(2)' delay='2s')
+            li.afterPrevious.shake(target='p:nth-of-type(2)' duration='5s')
+            li.fromPrevious.shake(target='p:nth-of-type(1)' delay='1s' duration='5s')
 
     p-slide
         h1 Tables
