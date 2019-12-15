@@ -20,7 +20,7 @@ a.slide-header-button {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 14px;
+    padding: 4px;
 
     color: black;
     text-decoration: none;
@@ -29,7 +29,8 @@ a.slide-header-button {
 }
 
 .slide-header-button:hover {
-    color: grey;
+    filter: invert(37%) sepia(0%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
+    /*color: grey;*/
     cursor: pointer;
 }
 
@@ -48,9 +49,15 @@ a.slide-header-button {
 }
 
 #sidebar .sidebar-nav a:hover {
-    color: grey;
+    /*color: grey;*/
+    filter: invert(37%) sepia(0%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
     cursor: pointer;
     transition: ease-in-out 0.2s;
+}
+
+object {
+    padding: 4px;
+    pointer-events: none;
 }
 
 #sidebar .sidebar-nav a div {
@@ -88,7 +95,7 @@ a.slide-header-button {
 /* Style the slide viewer */
 .slide-control-button {
     margin: 0;
-	padding: 0;
+	padding: 8px;
 	border: 0;
 	font-size: 100%;
 	font: inherit;
@@ -98,7 +105,8 @@ a.slide-header-button {
 }
 
 .slide-control-button:hover {
-    color: grey;
+    filter: invert(37%) sepia(0%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
+    /*color: grey;*/
     cursor: pointer;
 }
 
@@ -177,13 +185,17 @@ h1 {
 	font-size: 100%;
 	font: inherit;
 	vertical-align: baseline;
-    color: white;
+    color: black;
     transition: all 0.2s ease-in-out;
-    padding: 8px 10px;
+    padding: 8px 4px;
+    display: flex;
+    align-items: center;
+    filter: invert(70%) sepia(0%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
 }
 
 .fullscreen-slide-control-button:hover {
-    color: lightgrey;
+    filter: invert(40%) sepia(0%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%) !important;
+    /*color: lightgrey;*/
     cursor: pointer;
 }
 
