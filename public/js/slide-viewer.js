@@ -109,10 +109,10 @@ async function initSidebar() {
         let contents = $(this).siblings('ul');
         if(contents.css('display') == 'none') {
             contents.slideDown();
-            $(this).children('i').removeClass('fa-plus').addClass('fa-minus');
+            $(this).children('object').prop('data', '/icons/minus.svg');
         } else {
             contents.slideUp();
-            $(this).children('i').removeClass('fa-minus').addClass('fa-plus');
+            $(this).children('object').prop('data', '/icons/plus.svg');
         }
     });
 }
