@@ -10,7 +10,17 @@ let name,
     mathJaxLoader;
 
 /** Hook up the listeners **/
-$(document).ready(function() {
+function docReady(fn) {
+    // see if DOM is already available
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+        // call on next available tick
+        setTimeout(fn, 1);
+    } else {
+        document.addEventListener("DOMContentLoaded", fn);
+    }
+}
+
+docReady(function() {
     initMathJax();
     initSlideControls();
     initSlideHeader();
@@ -64,11 +74,11 @@ async function initMathJax() {
 }
 
 async function initSlideControls() {
-    $(document).on('click', '.slide', nextClick);
-    $(document).on('click', '#slide-control-prev', prevClick);
-    $(document).on('click', '#slide-control-next', nextClick);
-    $(document).on('click', '#slide-control-fullscreen', presentFullscreen);
-    $(document).keydown(function(event) {
+    document.querySelector('.slide').onclick = nextClick;
+    document.querySelector('#slide-control-prev').onclick = prevClick;
+    document.querySelector('#slide-control-next').onclick = nextClick;
+    document.querySelector('#slide-control-fullscreen').onclick = presentFullscreen;
+    document.onkeydown = function(event) {
         event = event || window.event;
         switch (event.keyCode) {
             case 37:    // left
@@ -83,11 +93,11 @@ async function initSlideControls() {
                 nextClick();
                 break;
         }
-    });
+    };
 }
 
 async function initSlideHeader() {
-    $('#slide-header-sidebar-button').click(function() {
+    document.querySelector('#slide-header-sidebar-button').onclick = function() {
         let sidebar = document.querySelector('#sidebar');
         if (sidebar.style.opacity == 1) {
             sidebar.ontransitionend = () => { 
@@ -100,21 +110,29 @@ async function initSlideHeader() {
             sidebar.style.opacity = 1;
             sidebar.style.marginLeft = 0;
 		}
-    });
+    };
 }
 
 // this function might take sometime once we implement slide list
 async function initSidebar() { 
-    $('#sidebar a').click(function() {
-        let contents = $(this).siblings('ul');
-        if(contents.css('display') == 'none') {
-            contents.slideDown();
-            $(this).children('object').prop('data', '/icons/minus.svg');
-        } else {
-            contents.slideUp();
-            $(this).children('object').prop('data', '/icons/plus.svg');
-        }
-    });
+    let e = document.querySelectorAll('#sidebar a');
+    for (let i = 0; i < e.length; ++i) {
+        e[i].onclick = function(event) {
+            let contents = e[i].nextSibling;
+            let icon = e[i].querySelector('object');
+            if (contents.dataset.state == 'collapsed') {
+                contents.dataset.state = 'expanded';
+                const slideDown = elem => elem.style.height = `${elem.scrollHeight}px`;
+                slideDown(contents);
+                icon.data = '/icons/minus.svg';
+            } else {
+                contents.dataset.state = 'collapsed';
+                const slideUp = elem => elem.style.height = `0px`;
+                slideUp(contents);
+                icon.data = '/icons/plus.svg';
+            }
+        };
+    }
 }
 
 async function initFullscreenSlideControls() {
@@ -137,13 +155,13 @@ async function initFullscreenSlideControls() {
     fullscreenSlideListNode.onmouseleave = e => {
         fullscreenSlideListNode.style.display = 'none';
     }
-    $(document).on('click', '#fullscreen-slide-control-list', e => {
+    document.querySelector('#fullscreen-slide-control-list').onclick = (e) => {
         fullscreenSlideListNode.style.display = 'block';
-    });
+    };
 
-    $(document).on('click', '#fullscreen-slide-control-prev', prevClick);
-    $(document).on('click', '#fullscreen-slide-control-next', nextClick);
-    $(document).on('click', '#fullscreen-slide-control-fullscreen', exitFullscreen);
+    document.querySelector('#fullscreen-slide-control-prev').onclick = prevClick;
+    document.querySelector('#fullscreen-slide-control-next').onclick = nextClick;
+    document.querySelector('#fullscreen-slide-control-fullscreen').onclick = exitFullscreen;
 }
 
 /** Load data **/
@@ -151,8 +169,9 @@ async function loadPresentation() {
     let target = window.location.origin + '/slides/data';
     console.log('querying ' + target);
     return new Promise((resolve, reject) => {
-        $.get(target, { name: name })
-            .done(function(data, status){
+        fetch(target + '?' + new URLSearchParams({ name: name }))
+            .then(response => response.json())
+            .then(function(data){
                 //console.log("Data: " + JSON.stringify(data) + "\nStatus: " + status);
                 presentation = data.presentation;
                 Object.freeze(presentation);    // we don't want to ever modify the original object
@@ -208,7 +227,7 @@ async function loadPresentation() {
 
                 resolve();
             })
-            .fail(function(err) {
+            .catch(function(err) {
                 console.log(err);
                 reject(err);
             });

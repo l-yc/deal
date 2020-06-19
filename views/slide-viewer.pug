@@ -1,9 +1,7 @@
 head
     link(rel='stylesheet' type='text/css' href='/css/slide-viewer.css')
     link(rel='stylesheet' type='text/css' href='/animate.css/animate.min.css')
-    link(rel='stylesheet' type='text/css' href='/fontawesome-free/css/all.css')
-    script(src='/jquery/jquery.min.js')
-    script(src='/js/slide-viewer.js')
+    //link(rel='stylesheet' type='text/css' href='/fontawesome-free/css/all.css')
 
     mixin navHeader(title)
         a.row.center
@@ -20,7 +18,7 @@ body.column
         div.column#sidebar
             div.sidebar-nav
                 +navHeader("Presentation Info")
-                ul
+                ul(data-state='expanded')
                     li Slide: #[span#slide-progress-indicator]
                     li Animation: #[span#animation-progress-indicator]
             div.sidebar-nav
@@ -43,6 +41,8 @@ body.column
                         a#fullscreen-slide-control-next.fullscreen-slide-control-button: object(data="/icons/chevron-right.svg" type="image/svg+xml")
                         a#fullscreen-slide-control-fullscreen.fullscreen-slide-control-button: object(data="/icons/maximize.svg" type="image/svg+xml")
             //div.ratio-container.slide(style='--ratio: calc(' + aspectRatio + ')') !{slideBody}
+
+    script(src='/js/slide-viewer.js')
 
 //- https://github.com/IanLunn/Hover
 //- https://github.com/daneden/animate.css

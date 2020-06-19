@@ -1,27 +1,7 @@
 let currentPath = "";
 
 /** Hook up the listeners **/
-$(document).ready(function() {
-    //$(document).on('click', '.slide', nextClick);
-    //$(document).on('click', '#slide-control-prev', prevClick);
-    //$(document).on('click', '#slide-control-next', nextClick);
-    //$(document).on('click', '#slide-control-fullscreen', presentFullscreen);
-    //$(document).keydown(function(event) {
-    //    event = event || window.event;
-    //    switch (event.keyCode) {
-    //        case 37:    // left
-    //        case 38:    // up
-    //            prevClick();
-    //            break;
-
-    //        case 39:    // right
-    //        case 40:    // down
-    //        case 32:    // space
-    //        case 13:    // enter
-    //            nextClick();
-    //            break;
-    //    }
-    //});
+(async function() {
     window.onpopstate = function(event) {
         console.log("location: " + document.location + ", state: " + JSON.stringify(event.state));
         let urlParams = new URLSearchParams(window.location.search);
@@ -36,26 +16,19 @@ $(document).ready(function() {
     let targetPath = (urlParams.has('path') ? decodeURIComponent(urlParams.get('path')) : '');
 
     loadDirectory(targetPath)
-});
+})();
 
 /** Load data **/
 async function loadDirectory(targetPath) {
     let target = window.location.origin + '/browse/data';
+    let urlParams = new URLSearchParams({ path: targetPath });
+    let url = target + '?' + urlParams.toString();
     console.log('querying ' + target + ' with ' + targetPath);
-    let request = new Promise((resolve, reject) => {
-        $.get(target, { path: targetPath }, function(data, status){
-            if (data.error) {
-                reject(data.message);
-                return;
-            } else {
-                console.log("Data: " + JSON.stringify(data) + "\nStatus: " + status);
-                resolve(data);
-            }
-        });
-    });
-
-    request
+    fetch(url, { method: 'GET' })
+        .then(response => response.json())
         .then(data => {
+            if (data.error) throw(data.message);
+            console.log("Data: " + JSON.stringify(data) + "\nStatus: " + status);
             console.log('success');
             populateDirectoryViewer(data);
         })
