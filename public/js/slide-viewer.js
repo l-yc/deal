@@ -9,7 +9,6 @@ let name,
     presentation = null,
     mathJaxLoader;
 
-/** Hook up the listeners **/
 function docReady(fn) {
     // see if DOM is already available
     if (document.readyState === "complete" || document.readyState === "interactive") {
@@ -19,7 +18,20 @@ function docReady(fn) {
         document.addEventListener("DOMContentLoaded", fn);
     }
 }
+const slideDown = elem => {
+    elem.style.height = `${elem.scrollHeight}px`;
+    console.log(elem.previousSibling);
+    elem.previousSibling.dataset.state = 'expanded';
+    elem.previousSibling.querySelector('img').src = '/icons/minus.svg';
+}
+const slideUp = elem => {
+    elem.style.height = `0px`;
+    console.log(elem.previousSibling);
+    elem.previousSibling.dataset.state = 'collapsed';
+    elem.previousSibling.querySelector('img').src = '/icons/plus.svg';
+}
 
+/** Hook up the listeners **/
 docReady(function() {
     initMathJax();
     initSlideControls();
@@ -117,19 +129,13 @@ async function initSlideHeader() {
 async function initSidebar() { 
     let e = document.querySelectorAll('#sidebar a');
     for (let i = 0; i < e.length; ++i) {
+        let contents = e[i].nextSibling;
+
         e[i].onclick = function(event) {
-            let contents = e[i].nextSibling;
-            let icon = e[i].querySelector('object');
-            if (contents.dataset.state == 'collapsed') {
-                contents.dataset.state = 'expanded';
-                const slideDown = elem => elem.style.height = `${elem.scrollHeight}px`;
+            if (e[i].dataset.state == 'collapsed') {
                 slideDown(contents);
-                icon.data = '/icons/minus.svg';
             } else {
-                contents.dataset.state = 'collapsed';
-                const slideUp = elem => elem.style.height = `0px`;
                 slideUp(contents);
-                icon.data = '/icons/plus.svg';
             }
         };
     }
@@ -200,6 +206,7 @@ async function loadPresentation() {
                     li.innerText = 'Slide ' + slide.slideNumber + ': ' + slideTitle;
                     li.onclick = e => { loadSlide(slide.slideNumber); };
                     slideListNode.appendChild(li);
+                    slideDown(slideListNode);
 
                     let li2 = document.createElement('li');
                     li2.innerText = 'Slide ' + slide.slideNumber + ': ' + slideTitle;
