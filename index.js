@@ -3,7 +3,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const url = require('url');
 const process = require('process');
-const yargs = require('yargs'); // if we only use it for 1 option, then not very worth it...
+const yargs = require('yargs');
 const app = express();
 
 const log = {
@@ -16,18 +16,26 @@ global.config = yargs
         alias: 'd',
         description: 'Sets the working directory',
         type: 'string',
+        default: process.cwd()
+    })
+    .option('port', {
+        alias: 'l',
+        description: 'Port to listen on (default ',
+        type: 'integer',
+        default: 3000
     })
     .option('safeMode', {
         alias: 's',
         description: 'Disables access beyond working directory',
         type: 'boolean',
+        default: false
     })
     .help()
     .alias('help', 'h')
     .argv;
 log.debug(global.config);
 
-let workingDir = global.config._[0] || global.config.dir || process.cwd();
+let workingDir = global.config._[0] || global.config.dir;
 try {
     process.chdir(workingDir);
 } catch (e) {
@@ -55,7 +63,7 @@ app.use(function(req, res, next) {
 });
 
 // Fetch the port from command line
-const port = 3000 || parseInt(process.arvg[1]);
+const port = global.config.port;
 
 app
     .listen(port, () => {
