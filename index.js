@@ -3,12 +3,37 @@ const fs = require('fs').promises;
 const path = require('path');
 const url = require('url');
 const process = require('process');
+const yargs = require('yargs'); // if we only use it for 1 option, then not very worth it...
 const app = express();
 
 const log = {
     debug: require('debug')('deal:index:debug'),
     error: require('debug')('deal:index:error')
 };
+
+global.config = yargs
+    .option('dir', {
+        alias: 'd',
+        description: 'Sets the working directory',
+        type: 'string',
+    })
+    .option('safeMode', {
+        alias: 's',
+        description: 'Disables access beyond working directory',
+        type: 'boolean',
+    })
+    .help()
+    .alias('help', 'h')
+    .argv;
+log.debug(global.config);
+
+let workingDir = global.config._[0] || global.config.dir || process.cwd();
+try {
+    process.chdir(workingDir);
+} catch (e) {
+    log.error(`Error encountered while attempting to load directory ${workingDir}:`, e);
+    process.exit(1);
+}
 
 global.appRoot = process.cwd();
 app.use(express.static(path.join(__dirname, '/public')));
