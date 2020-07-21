@@ -1,8 +1,12 @@
-<p align="center">
-  ![logo](logo.svg.png)
-</p>
+<div align="center">
+  <h1>deal</h1>
+  <img src="logo.svg" alt="lcd-board logo" height="128">
+  <p>
+    A <strong>Hackable Presentation</strong> App
+  </p>
+</div>
 
-# deal
+<hr>
 
 Readable text-based slides based on [pug](https://github.com/pugjs/pug) syntax with [MathJax](https://www.mathjax.org) support which handles the formatting for you.
 
@@ -20,7 +24,7 @@ p-slide.title
         li.fromPrevious.bounceOut(target="h1" delay="0.5")
 ```
 
-Click [here](https://parangspace--lyc.repl.co) for live demo. (OUTDATED)
+Click ~~[here](https://parangspace--lyc.repl.co)~~ [OUTDATED] [here](https://parangninja.sytes.net/app/slides/) [WIP] for live demo.
 
 Features:
 * Built-in theme selection
@@ -235,6 +239,10 @@ Comments can be added within your slides if necessary by adding `//` , which wil
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+Roadmap:
+- [ ] Built in editor
+- [ ] Run JS code in slide
 
 ## License
 
