@@ -30,6 +30,12 @@ global.config = yargs
         type: 'boolean',
         default: false
     })
+    .option('webRoot', {
+        alias: 'a',
+        description: 'Disables access beyond working directory',
+        type: 'string',
+        default: ''
+    })
     .help()
     .alias('help', 'h')
     .argv;
@@ -54,7 +60,7 @@ app.use('/browse', require('./controllers/slide-selector.js')(express));
 
 app.get('/', (req, res) => {
     //res.render('index');
-    res.redirect('/browse/view');
+    res.redirect('browse/view');
 });
 
 app.use(function(req, res, next) {

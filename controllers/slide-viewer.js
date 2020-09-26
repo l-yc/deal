@@ -16,7 +16,7 @@ module.exports = function(express) {
     let router = express.Router();
 
     router.get('/view', (req, res, next) => {
-        res.render('slide-viewer');
+        res.render('slide-viewer', { webRoot: global.config.webRoot });
     });
 
     router.get('/data', (req, res) => {

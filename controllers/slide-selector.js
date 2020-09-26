@@ -22,7 +22,7 @@ module.exports = function(express) {
     let router = express.Router();
 
     router.get('/view', (req, res) => {
-        res.render('slide-selector');
+        res.render('slide-selector', { webRoot: global.config.webRoot });
     });
 
     router.get('/data', (req, res) => {
