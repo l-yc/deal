@@ -42,10 +42,13 @@
 }
 
 /* Create slide layouts here */
-.slide .layout-title {
+.slide p-slide {
     display: flex;
-    justify-content: center;
     flex-direction: column;
+}
+
+.slide .layout-title {
+    justify-content: center;
     text-align: center;
 }
 /* becasue I'm both lazy and busy there is almost no working templates yet */
