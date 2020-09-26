@@ -8,9 +8,33 @@ let name,
     stack,
     presentation = null,
     mathJaxLoader;
+let basePath;
+
+function docReady(fn) {
+    // see if DOM is already available
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+        // call on next available tick
+        setTimeout(fn, 1);
+    } else {
+        document.addEventListener("DOMContentLoaded", fn);
+    }
+    basePath = window.location.pathname.split('/').slice(0,-2).join('/')
+}
+const slideDown = elem => {
+    elem.style.height = `${elem.scrollHeight}px`;
+    console.log(elem.previousSibling);
+    elem.previousSibling.dataset.state = 'expanded';
+    elem.previousSibling.querySelector('img').src = basePath + '/icons/minus.svg';
+}
+const slideUp = elem => {
+    elem.style.height = `0px`;
+    console.log(elem.previousSibling);
+    elem.previousSibling.dataset.state = 'collapsed';
+    elem.previousSibling.querySelector('img').src = basePath + '/icons/plus.svg';
+}
 
 /** Hook up the listeners **/
-$(document).ready(function() {
+docReady(function() {
     initMathJax();
     initSlideControls();
     initSlideHeader();
@@ -57,18 +81,20 @@ async function initMathJax() {
             }
         };
         let script = document.createElement('script');
-        script.src = '/mathjax/es5/tex-chtml.js';
+        script.src = basePath + '/mathjax/es5/tex-chtml.js';
         script.async = true;
         document.head.appendChild(script);
     });
 }
 
 async function initSlideControls() {
-    $(document).on('click', '.slide', nextClick);
-    $(document).on('click', '#slide-control-prev', prevClick);
-    $(document).on('click', '#slide-control-next', nextClick);
-    $(document).on('click', '#slide-control-fullscreen', presentFullscreen);
-    $(document).keydown(function(event) {
+    document.querySelector('.slide').onclick = e => {
+        if (!e.target.matches('button') && !e.target.matches('a')) nextClick();
+    };
+    document.querySelector('#slide-control-prev').onclick = prevClick;
+    document.querySelector('#slide-control-next').onclick = nextClick;
+    document.querySelector('#slide-control-fullscreen').onclick = presentFullscreen;
+    document.onkeydown = function(event) {
         event = event || window.event;
         switch (event.keyCode) {
             case 37:    // left
@@ -83,11 +109,11 @@ async function initSlideControls() {
                 nextClick();
                 break;
         }
-    });
+    };
 }
 
 async function initSlideHeader() {
-    $('#slide-header-sidebar-button').click(function() {
+    document.querySelector('#slide-header-sidebar-button').onclick = function() {
         let sidebar = document.querySelector('#sidebar');
         if (sidebar.style.opacity == 1) {
             sidebar.ontransitionend = () => { 
@@ -100,21 +126,23 @@ async function initSlideHeader() {
             sidebar.style.opacity = 1;
             sidebar.style.marginLeft = 0;
 		}
-    });
+    };
 }
 
 // this function might take sometime once we implement slide list
 async function initSidebar() { 
-    $('#sidebar a').click(function() {
-        let contents = $(this).siblings('ul');
-        if(contents.css('display') == 'none') {
-            contents.slideDown();
-            $(this).children('object').prop('data', '/icons/minus.svg');
-        } else {
-            contents.slideUp();
-            $(this).children('object').prop('data', '/icons/plus.svg');
-        }
-    });
+    let e = document.querySelectorAll('#sidebar a');
+    for (let i = 0; i < e.length; ++i) {
+        let contents = e[i].nextSibling;
+
+        e[i].onclick = function(event) {
+            if (e[i].dataset.state == 'collapsed') {
+                slideDown(contents);
+            } else {
+                slideUp(contents);
+            }
+        };
+    }
 }
 
 async function initFullscreenSlideControls() {
@@ -137,22 +165,23 @@ async function initFullscreenSlideControls() {
     fullscreenSlideListNode.onmouseleave = e => {
         fullscreenSlideListNode.style.display = 'none';
     }
-    $(document).on('click', '#fullscreen-slide-control-list', e => {
+    document.querySelector('#fullscreen-slide-control-list').onclick = (e) => {
         fullscreenSlideListNode.style.display = 'block';
-    });
+    };
 
-    $(document).on('click', '#fullscreen-slide-control-prev', prevClick);
-    $(document).on('click', '#fullscreen-slide-control-next', nextClick);
-    $(document).on('click', '#fullscreen-slide-control-fullscreen', exitFullscreen);
+    document.querySelector('#fullscreen-slide-control-prev').onclick = prevClick;
+    document.querySelector('#fullscreen-slide-control-next').onclick = nextClick;
+    document.querySelector('#fullscreen-slide-control-fullscreen').onclick = exitFullscreen;
 }
 
 /** Load data **/
 async function loadPresentation() {
-    let target = window.location.origin + '/slides/data';
+    let target = basePath + '/slides/data';
     console.log('querying ' + target);
     return new Promise((resolve, reject) => {
-        $.get(target, { name: name })
-            .done(function(data, status){
+        fetch(target + '?' + new URLSearchParams({ name: name }))
+            .then(response => response.json())
+            .then(function(data){
                 //console.log("Data: " + JSON.stringify(data) + "\nStatus: " + status);
                 presentation = data.presentation;
                 Object.freeze(presentation);    // we don't want to ever modify the original object
@@ -164,7 +193,7 @@ async function loadPresentation() {
                 let link = document.createElement('link');
                 link.rel = 'stylesheet';
                 link.type = 'text/css';
-                link.href = '/themes/' + presentation.meta.theme + '.css';
+                link.href = basePath + '/themes/' + presentation.meta.theme + '.css';
                 link.media = 'all';
                 document.head.appendChild(link);
 
@@ -181,6 +210,7 @@ async function loadPresentation() {
                     li.innerText = 'Slide ' + slide.slideNumber + ': ' + slideTitle;
                     li.onclick = e => { loadSlide(slide.slideNumber); };
                     slideListNode.appendChild(li);
+                    slideDown(slideListNode);
 
                     let li2 = document.createElement('li');
                     li2.innerText = 'Slide ' + slide.slideNumber + ': ' + slideTitle;
@@ -208,7 +238,7 @@ async function loadPresentation() {
 
                 resolve();
             })
-            .fail(function(err) {
+            .catch(function(err) {
                 console.log(err);
                 reject(err);
             });
@@ -261,6 +291,15 @@ async function loadSlide(newSlideNumber) {
                 else return Promise.resolve();
             }).then(() => {
                 slideNode.innerHTML = slideBody;
+                // load scripts FIXME the script isn't containerised in a slide :(
+                var scripts = Array.prototype.slice.call(slideNode.getElementsByTagName("script"));
+                scripts.forEach(s => {
+                    if (s.src != "") {
+                        var tag = document.createElement("script");
+                        tag.src = s.src;
+                        document.getElementsByTagName("head")[0].appendChild(tag);
+                    } else eval(s.innerHTML);
+                });
 
                 mathJaxLoader = mathJaxLoader
                     .then(() => {

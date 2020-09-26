@@ -1,48 +1,49 @@
 head
-    link(rel='stylesheet' type='text/css' href='/css/slide-viewer.css')
-    link(rel='stylesheet' type='text/css' href='/animate.css/animate.min.css')
-    link(rel='stylesheet' type='text/css' href='/fontawesome-free/css/all.css')
-    script(src='/jquery/jquery.min.js')
-    script(src='/js/slide-viewer.js')
+    link(rel='stylesheet' type='text/css' href=webRoot+'/css/slide-viewer.css')
+    link(rel='stylesheet' type='text/css' href=webRoot+'/animate.css/animate.min.css')
 
-    mixin navHeader(title)
-        a.row.center
+    mixin navHeader(title, state)
+        a.row.center(data-state=state)
             div: strong #{title}
-            object(data="/icons/minus.svg" type="image/svg+xml")
+            if state === 'expanded'
+                img(src=webRoot+"/icons/minus.svg" type="image/svg+xml")
+            else
+                img(src=webRoot+"/icons/plus.svg" type="image/svg+xml")
 
 
 body.column
     div.row#slide-header
-        a#slide-header-sidebar-button.slide-header-button: object(data="/icons/menu.svg" type="image/svg+xml")
-        a#slide-header-home-button.slide-header-button(href="/browse/view"): object(data="/icons/home.svg" type="image/svg+xml")
+        a#slide-header-sidebar-button.slide-header-button: object(data=webRoot+"/icons/menu.svg" type="image/svg+xml")
+        a#slide-header-home-button.slide-header-button(href=webRoot+"/browse/view"): object(data=webRoot+"/icons/home.svg" type="image/svg+xml")
         h1#slide-title
     div.row(style="flex:1")
         div.column#sidebar
             div.sidebar-nav
-                +navHeader("Presentation Info")
+                +navHeader("Presentation Info","expanded")
                 ul
                     li Slide: #[span#slide-progress-indicator]
                     li Animation: #[span#animation-progress-indicator]
             div.sidebar-nav
-                +navHeader("Slide List")
+                +navHeader("Slide List","collapsed")
                 ul#slide-list
 
         div.column(style="flex:1")
             div#slide-controls
                 div.row.center
-                    a#slide-control-prev.slide-control-button: object(data="/icons/chevron-left.svg" type="image/svg+xml")
-                    a#slide-control-next.slide-control-button: object(data="/icons/chevron-right.svg" type="image/svg+xml")
-                    a#slide-control-fullscreen.slide-control-button: object(data="/icons/maximize.svg" type="image/svg+xml")
+                    a#slide-control-prev.slide-control-button: object(data=webRoot+"/icons/chevron-left.svg" type="image/svg+xml")
+                    a#slide-control-next.slide-control-button: object(data=webRoot+"/icons/chevron-right.svg" type="image/svg+xml")
+                    a#slide-control-fullscreen.slide-control-button: object(data=webRoot+"/icons/maximize.svg" type="image/svg+xml")
             div.row.center
                 div(style='position: relative')
                     div.ratio-container.slide
                     div#fullscreen-slide-controls
-                        a#fullscreen-slide-control-prev.fullscreen-slide-control-button: object(data="/icons/chevron-left.svg" type="image/svg+xml")
-                        a#fullscreen-slide-control-list.fullscreen-slide-control-button #[span#text] #[object(data="/icons/chevron-down.svg" type="image/svg+xml")]
+                        a#fullscreen-slide-control-prev.fullscreen-slide-control-button: object(data=webRoot+"/icons/chevron-left.svg" type="image/svg+xml")
+                        a#fullscreen-slide-control-list.fullscreen-slide-control-button #[span#text] #[object(data=webRoot+"/icons/chevron-down.svg" type="image/svg+xml")]
                         ul#fullscreen-slide-list
-                        a#fullscreen-slide-control-next.fullscreen-slide-control-button: object(data="/icons/chevron-right.svg" type="image/svg+xml")
-                        a#fullscreen-slide-control-fullscreen.fullscreen-slide-control-button: object(data="/icons/maximize.svg" type="image/svg+xml")
-            //div.ratio-container.slide(style='--ratio: calc(' + aspectRatio + ')') !{slideBody}
+                        a#fullscreen-slide-control-next.fullscreen-slide-control-button: object(data=webRoot+"/icons/chevron-right.svg" type="image/svg+xml")
+                        a#fullscreen-slide-control-fullscreen.fullscreen-slide-control-button: object(data=webRoot+"/icons/maximize.svg" type="image/svg+xml")
+
+    script(src=webRoot+'/js/slide-viewer.js')
 
 //- https://github.com/IanLunn/Hover
 //- https://github.com/daneden/animate.css

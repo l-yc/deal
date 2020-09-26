@@ -55,6 +55,11 @@ a.slide-header-button {
     transition: ease-in-out 0.2s;
 }
 
+#sidebar ul {
+    overflow: hidden;
+    transition: height 0.4s;
+}
+
 object {
     padding: 4px;
     pointer-events: none;
