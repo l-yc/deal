@@ -88,7 +88,9 @@ async function initMathJax() {
 }
 
 async function initSlideControls() {
-    document.querySelector('.slide').onclick = nextClick;
+    document.querySelector('.slide').onclick = e => {
+        if (!e.target.matches('button') && !e.target.matches('a')) nextClick();
+    };
     document.querySelector('#slide-control-prev').onclick = prevClick;
     document.querySelector('#slide-control-next').onclick = nextClick;
     document.querySelector('#slide-control-fullscreen').onclick = presentFullscreen;
@@ -289,6 +291,15 @@ async function loadSlide(newSlideNumber) {
                 else return Promise.resolve();
             }).then(() => {
                 slideNode.innerHTML = slideBody;
+                // load scripts FIXME the script isn't containerised in a slide :(
+                var scripts = Array.prototype.slice.call(slideNode.getElementsByTagName("script"));
+                scripts.forEach(s => {
+                    if (s.src != "") {
+                        var tag = document.createElement("script");
+                        tag.src = s.src;
+                        document.getElementsByTagName("head")[0].appendChild(tag);
+                    } else eval(s.innerHTML);
+                });
 
                 mathJaxLoader = mathJaxLoader
                     .then(() => {
