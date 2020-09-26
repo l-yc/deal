@@ -1,4 +1,5 @@
 let currentPath = "";
+let basePath = "";
 
 /** Hook up the listeners **/
 (async function() {
@@ -14,13 +15,14 @@ let currentPath = "";
     console.log(window.location.search);
     console.log(urlParams.get('path'));
     let targetPath = (urlParams.has('path') ? decodeURIComponent(urlParams.get('path')) : '');
+    basePath = window.location.pathname.split('/').slice(0,-2).join('/')
 
     loadDirectory(targetPath)
 })();
 
 /** Load data **/
 async function loadDirectory(targetPath) {
-    let target = window.location.origin + '/browse/data';
+    let target = basePath + '/browse/data';
     let urlParams = new URLSearchParams({ path: targetPath });
     let url = target + '?' + urlParams.toString();
     console.log('querying ' + target + ' with ' + targetPath);
@@ -38,7 +40,7 @@ async function loadDirectory(targetPath) {
 }
 
 async function loadFile(targetPath) {
-    window.location = window.location.origin + '/slides/view?name=' + encodeURIComponent(targetPath);
+    window.location = basePath + '/slides/view?name=' + encodeURIComponent(targetPath);
 }
 
 /** Update UI **/

@@ -8,6 +8,7 @@ let name,
     stack,
     presentation = null,
     mathJaxLoader;
+let basePath;
 
 function docReady(fn) {
     // see if DOM is already available
@@ -17,18 +18,19 @@ function docReady(fn) {
     } else {
         document.addEventListener("DOMContentLoaded", fn);
     }
+    basePath = window.location.pathname.split('/').slice(0,-2).join('/')
 }
 const slideDown = elem => {
     elem.style.height = `${elem.scrollHeight}px`;
     console.log(elem.previousSibling);
     elem.previousSibling.dataset.state = 'expanded';
-    elem.previousSibling.querySelector('img').src = '/icons/minus.svg';
+    elem.previousSibling.querySelector('img').src = basePath + '/icons/minus.svg';
 }
 const slideUp = elem => {
     elem.style.height = `0px`;
     console.log(elem.previousSibling);
     elem.previousSibling.dataset.state = 'collapsed';
-    elem.previousSibling.querySelector('img').src = '/icons/plus.svg';
+    elem.previousSibling.querySelector('img').src = basePath + '/icons/plus.svg';
 }
 
 /** Hook up the listeners **/
@@ -79,7 +81,7 @@ async function initMathJax() {
             }
         };
         let script = document.createElement('script');
-        script.src = '/mathjax/es5/tex-chtml.js';
+        script.src = basePath + '/mathjax/es5/tex-chtml.js';
         script.async = true;
         document.head.appendChild(script);
     });
@@ -172,7 +174,7 @@ async function initFullscreenSlideControls() {
 
 /** Load data **/
 async function loadPresentation() {
-    let target = window.location.origin + '/slides/data';
+    let target = basePath + '/slides/data';
     console.log('querying ' + target);
     return new Promise((resolve, reject) => {
         fetch(target + '?' + new URLSearchParams({ name: name }))
@@ -189,7 +191,7 @@ async function loadPresentation() {
                 let link = document.createElement('link');
                 link.rel = 'stylesheet';
                 link.type = 'text/css';
-                link.href = '/themes/' + presentation.meta.theme + '.css';
+                link.href = basePath + '/themes/' + presentation.meta.theme + '.css';
                 link.media = 'all';
                 document.head.appendChild(link);
 
