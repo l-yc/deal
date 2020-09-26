@@ -270,7 +270,7 @@ async function loadSlide(newSlideNumber) {
         totalAnimations = 0;
     } else {
         slide = JSON.parse(JSON.stringify(presentation.slides[newSlideNumber]));    // deep copy for manipulation
-        slideBody = decodeURIComponent(slide.slideBody);
+        slideBody = slide.slideBody;
         slideNumber = parseInt(slide.slideNumber);
         slideTransition = slide.slideTransition;
         animationList = slide.animationList;
