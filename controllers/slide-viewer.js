@@ -211,8 +211,11 @@ function resolvePaths(node, srcFilePath) {
         let idx = node.attrs.findIndex(a => { return a.name === 'src' });
         log.debug(idx);
         if (idx == -1); // TODO: throw an exception
-        let tmp = node.attrs[idx].val;
-        node.attrs[idx].val = '"' + path.join(path.dirname(srcFilePath), eval(node.attrs[idx].val)) + '"';
+        let tmp = eval(node.attrs[idx].val);
+        const urlRegex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/; // http://urlregex.com/
+        if (!tmp.match(urlRegex)) {
+            node.attrs[idx].val = '"' + path.join(path.dirname(srcFilePath), tmp) + '"';
+        }
         log.debug(tmp + ' -> ' + node.attrs[idx].val);
     }
 
